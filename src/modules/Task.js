@@ -10,6 +10,26 @@ class Task {
   hello() {
     console.log("hello world");
   }
+
+  editTitle(newTitle) {
+    this.title = newTitle;
+  }
+
+  editDescription(newDescription) {
+    this.description = newDescription;
+  }
+
+  editDueDate(newDate) {
+    this.dueDate = newDate;
+  }
+
+  editPriority(newPriority) {
+    this.priority = newPriority;
+  }
+
+  checkCompleted() {
+    this.completed = !this.completed;
+  }
 }
 
 export default Task;

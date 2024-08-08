@@ -7,3 +7,5 @@ class Project {
     this.toDoList = new TodoList();
   }
 }
+
+export default Project;

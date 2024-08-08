@@ -7,10 +7,6 @@ class Task {
     this.completed = false;
   }
 
-  hello() {
-    console.log("hello world");
-  }
-
   editTitle(newTitle) {
     this.title = newTitle;
   }

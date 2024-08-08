@@ -6,4 +6,8 @@ export default class TodoList {
   appendTask(task) {
     this.taskArray.push(task);
   }
+
+  deleteTask(taskTitle) {
+    this.taskArray = this.taskArray.filter((task) => task.title !== taskTitle);
+  }
 }

@@ -8,10 +8,14 @@ export default class UI {
   static init() {
     UI.cacheDOM();
     UI.bindEventHandler();
+    UI.exampleProjects();
+  }
+
+  static exampleProjects() {
     const exampleProject1 = createProject("Study", "black");
     const exampleProject2 = createProject("Work", "red");
-    UI.addProject(exampleProject1);
-    UI.addProject(exampleProject2);
+    UI.appendProject(exampleProject1);
+    UI.appendProject(exampleProject2);
     UI.render();
   }
 
@@ -21,6 +25,7 @@ export default class UI {
     this.closeBtn = document.querySelector("#project-dialog-close");
     this.projectForm = document.querySelector("#add-project-form");
     this.projectContainer = document.querySelector(".project-container");
+    this.deleteProjectBtn = document.querySelector("#delete-project-btn");
   }
 
   static bindEventHandler() {
@@ -32,6 +37,15 @@ export default class UI {
 
     // Add a new project
     this.projectForm.addEventListener("submit", UI.addNewProject.bind(this));
+
+    // Delete project
+    document.addEventListener("click", function (e) {
+      const target = e.target.closest("#delete-project-btn");
+
+      if (target) {
+        UI.deleteProject(target);
+      }
+    });
   }
 
   static openModal() {
@@ -49,24 +63,37 @@ export default class UI {
         const name = project.name;
         const color = project.color;
         project.render();
-        const projectItem = document.createElement("div");
-        projectItem.classList.add("project-container-item");
-        projectItem.innerHTML = `<span class="${color}"></span> ${name}`;
-        this.projectContainer.appendChild(projectItem);
+        UI.createProjectDiv(name, color);
       }
     });
   }
 
-  static addProject(project) {
+  static createProjectDiv(name, color) {
+    const projectItem = document.createElement("div");
+    const projectName = document.createElement("div");
+    const deleteBtn = document.createElement("button");
+
+    projectName.textContent = name;
+    deleteBtn.setAttribute("id", "delete-project-btn");
+    deleteBtn.textContent = "delete";
+
+    projectItem.classList.add("project-container-item");
+    projectItem.innerHTML = `<span class="${color}"></span>`;
+    projectItem.appendChild(projectName);
+    projectItem.appendChild(deleteBtn);
+    this.projectContainer.appendChild(projectItem);
+    UI.cacheDOM;
+    UI.bindEventHandler;
+  }
+
+  static appendProject(project) {
     if (UI.projectArray.length === 0) {
       UI.projectArray.push(project);
     } else {
       UI.projectArray.forEach((existingProject) => {
         if (project.name === existingProject.name) {
-          console.log("name matches");
           return;
         }
-        console.log("name does not match");
         UI.projectArray.push(project);
       });
     }
@@ -77,11 +104,24 @@ export default class UI {
     const name = document.querySelector("#project-name").value;
     const color = document.querySelector("#project-color").value;
     const newProject = createProject(name, color);
-    UI.addProject(newProject);
+    UI.appendProject(newProject);
     this.projectDialog.close();
     this.projectForm.reset();
 
     UI.render();
+  }
+
+  static deleteProject(target) {
+    console.log("delete button clicked");
+    const projectName = target.parentNode.children[1].textContent;
+    UI.projectArray.forEach((project) => {
+      if (projectName === project.name) {
+        const index = UI.projectArray.indexOf(project);
+        UI.projectArray.splice(index, 1);
+      }
+    });
+    target.parentNode.remove();
+    console.log(UI.projectArray);
   }
 }
 

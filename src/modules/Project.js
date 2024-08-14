@@ -4,7 +4,13 @@ export default class Project {
   constructor(name, color) {
     this.name = name;
     this.color = color;
+    this.rendered = false;
     this.toDoList = createTodoList();
+  }
+
+  // Use this function after rendering.
+  render() {
+    this.rendered = true;
   }
 }
 

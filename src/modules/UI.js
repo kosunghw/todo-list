@@ -12,7 +12,6 @@ export default class UI {
     const exampleProject2 = createProject("Work", "red");
     UI.addProject(exampleProject1);
     UI.addProject(exampleProject2);
-    console.log(UI.projectArray);
     UI.render();
   }
 
@@ -30,6 +29,9 @@ export default class UI {
 
     // Close Form
     this.closeBtn.addEventListener("click", UI.closeModal.bind(this));
+
+    // Add a new project
+    this.projectForm.addEventListener("submit", UI.addNewProject.bind(this));
   }
 
   static openModal() {
@@ -43,12 +45,15 @@ export default class UI {
 
   static render() {
     UI.projectArray.forEach((project) => {
-      const name = project.name;
-      const color = project.color;
-      const projectItem = document.createElement("div");
-      projectItem.classList.add("project-container-item");
-      projectItem.innerHTML = `<span class="${color}"></span> ${name}`;
-      this.projectContainer.appendChild(projectItem);
+      if (!project.rendered) {
+        const name = project.name;
+        const color = project.color;
+        project.render();
+        const projectItem = document.createElement("div");
+        projectItem.classList.add("project-container-item");
+        projectItem.innerHTML = `<span class="${color}"></span> ${name}`;
+        this.projectContainer.appendChild(projectItem);
+      }
     });
   }
 
@@ -65,6 +70,18 @@ export default class UI {
         UI.projectArray.push(project);
       });
     }
+  }
+
+  static addNewProject(event) {
+    event.preventDefault();
+    const name = document.querySelector("#project-name").value;
+    const color = document.querySelector("#project-color").value;
+    const newProject = createProject(name, color);
+    UI.addProject(newProject);
+    this.projectDialog.close();
+    this.projectForm.reset();
+
+    UI.render();
   }
 }
 

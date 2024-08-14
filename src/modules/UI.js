@@ -92,7 +92,11 @@ export default class UI {
     const name = document.querySelector("#project-name").value;
     const color = document.querySelector("#project-color").value;
     // Check if project array has a project with the same name
-    if (UI.projectArray.some((project) => project.name === name)) {
+    if (
+      UI.projectArray.some(
+        (project) => project.name.toLowerCase() === name.toLowerCase()
+      )
+    ) {
       alert("Same project name exists");
     } else {
       const newProject = createProject(name, color);

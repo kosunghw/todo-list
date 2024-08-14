@@ -11,3 +11,7 @@ export default class TodoList {
     this.taskArray = this.taskArray.filter((task) => task.title !== taskTitle);
   }
 }
+
+export function createTodoList() {
+  return new TodoList();
+}

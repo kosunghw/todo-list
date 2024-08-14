@@ -1,11 +1,13 @@
-import TodoList from "./TodoList";
+import TodoList, { createTodoList } from "./TodoList";
 
-class Project {
+export default class Project {
   constructor(name, color) {
     this.name = name;
     this.color = color;
-    this.toDoList = new TodoList();
+    this.toDoList = createTodoList();
   }
 }
 
-export default Project;
+export function createProject(name, color) {
+  return new Project(name, color);
+}

@@ -3,7 +3,7 @@ import TodoList from "./modules/TodoList";
 import Project from "./modules/Project";
 import UI from "./modules/UI";
 
-document.addEventListener("DOMContentLoaded", UI);
+document.addEventListener("DOMContentLoaded", UI.init);
 
 // const btn = document.querySelector("#add-project-btn");
 // const projectDialog = document.querySelector("#add-project-dialog");

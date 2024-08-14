@@ -1,4 +1,4 @@
-class Task {
+export default class Task {
   constructor(title, description, dueDate, priority) {
     this.title = title;
     this.description = description;
@@ -28,4 +28,6 @@ class Task {
   }
 }
 
-export default Task;
+export function createTask(title, description, dueDate, priority) {
+  return new Task(title, description, dueDate, priority);
+}

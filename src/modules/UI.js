@@ -14,8 +14,8 @@ export default class UI {
   static exampleProjects() {
     const exampleProject1 = createProject("Study", "black");
     const exampleProject2 = createProject("Work", "red");
-    UI.appendProject(exampleProject1);
-    UI.appendProject(exampleProject2);
+    UI.projectArray.push(exampleProject1);
+    UI.projectArray.push(exampleProject2);
     UI.render();
   }
 
@@ -66,6 +66,7 @@ export default class UI {
         UI.createProjectDiv(name, color);
       }
     });
+    console.log(UI.projectArray);
   }
 
   static createProjectDiv(name, color) {
@@ -86,25 +87,17 @@ export default class UI {
     UI.bindEventHandler;
   }
 
-  static appendProject(project) {
-    if (UI.projectArray.length === 0) {
-      UI.projectArray.push(project);
-    } else {
-      UI.projectArray.forEach((existingProject) => {
-        if (project.name === existingProject.name) {
-          return;
-        }
-        UI.projectArray.push(project);
-      });
-    }
-  }
-
   static addNewProject(event) {
     event.preventDefault();
     const name = document.querySelector("#project-name").value;
     const color = document.querySelector("#project-color").value;
-    const newProject = createProject(name, color);
-    UI.appendProject(newProject);
+    // Check if project array has a project with the same name
+    if (UI.projectArray.some((project) => project.name === name)) {
+      alert("Same project name exists");
+    } else {
+      const newProject = createProject(name, color);
+      UI.projectArray.push(newProject);
+    }
     this.projectDialog.close();
     this.projectForm.reset();
 

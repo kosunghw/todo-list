@@ -10,6 +10,10 @@ export default class TodoList {
   deleteTask(taskTitle) {
     this.taskArray = this.taskArray.filter((task) => task.title !== taskTitle);
   }
+
+  get list() {
+    return this.taskArray;
+  }
 }
 
 export function createTodoList() {

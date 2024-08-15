@@ -20,10 +20,18 @@ export default class UI {
       "08-24-2024",
       "MEDIUM"
     );
+    const exampleTask2 = createTask(
+      "Todo List",
+      "Solve problems on LeetCode",
+      "08-24-2024",
+      "MEDIUM"
+    );
     exampleProject1.toDoList.appendTask(exampleTask1);
+    exampleProject1.toDoList.appendTask(exampleTask2);
     UI.projectArray.push(exampleProject1);
     UI.projectArray.push(exampleProject2);
     UI.render();
+    UI.showProjectContent(exampleProject1);
   }
 
   static cacheDOM() {
@@ -33,6 +41,7 @@ export default class UI {
     this.projectForm = document.querySelector("#add-project-form");
     this.projectContainer = document.querySelector(".project-container");
     this.deleteProjectBtn = document.querySelector("#delete-project-btn");
+    this.contentContainer = document.querySelector(".content");
   }
 
   static bindEventHandler() {
@@ -51,6 +60,18 @@ export default class UI {
 
       if (target) {
         UI.deleteProject(target);
+      }
+      e.stopPropagation();
+    });
+
+    // Click on project
+    document.addEventListener("click", function (e) {
+      const target = e.target.closest(".project-container-item");
+      if (target && !e.target.matches("button")) {
+        const project = UI.findProject(target);
+        UI.showProjectContent(project);
+
+        // UI.showProjectContent(target);
       }
     });
   }
@@ -73,7 +94,6 @@ export default class UI {
         UI.createProjectDiv(name, color);
       }
     });
-    console.log(UI.projectArray);
   }
 
   static createProjectDiv(name, color) {
@@ -81,6 +101,7 @@ export default class UI {
     const projectName = document.createElement("div");
     const deleteBtn = document.createElement("button");
 
+    projectName.classList.add("project-name");
     projectName.textContent = name;
     deleteBtn.setAttribute("id", "delete-project-btn");
     deleteBtn.classList.add("hide");
@@ -125,7 +146,44 @@ export default class UI {
         UI.projectArray.splice(index, 1);
       }
     });
+
     target.parentNode.remove();
-    console.log(UI.projectArray);
+  }
+
+  static findProject(target) {
+    const projectName = target.children[1].textContent;
+    for (let i = 0; i < UI.projectArray.length; i++) {
+      if (projectName === UI.projectArray[i].name) {
+        return UI.projectArray[i];
+      }
+    }
+  }
+
+  static showProjectContent(project) {
+    this.contentContainer.innerHTML = "";
+    const projectTitle = document.createElement("h1");
+    const taskDiv = document.createElement("div");
+    const addTaskBtn = document.createElement("button");
+
+    projectTitle.textContent = project.name;
+    if (project.toDoList.list.length > 0) {
+      project.toDoList.list.forEach((task) => {
+        taskDiv.appendChild(UI.createTaskDiv(task));
+      });
+    }
+    addTaskBtn.textContent = "Add Task";
+
+    this.contentContainer.appendChild(projectTitle);
+    this.contentContainer.appendChild(taskDiv);
+    this.contentContainer.appendChild(addTaskBtn);
+  }
+
+  static createTaskDiv(task) {
+    const taskDiv = document.createElement("div");
+    const taskTitle = document.createElement("div");
+
+    taskTitle.textContent = task.title;
+    taskDiv.appendChild(taskTitle);
+    return taskDiv;
   }
 }

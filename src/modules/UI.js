@@ -37,8 +37,12 @@ export default class UI {
   static cacheDOM() {
     this.addProjectBtn = document.querySelector("#add-project-btn");
     this.projectDialog = document.querySelector("#add-project-dialog");
-    this.closeBtn = document.querySelector("#project-dialog-close");
+    this.addTaskBtn = document.querySelector("#add-task-btn");
+    this.taskDialog = document.querySelector("#add-task-dialog");
+    this.projectCloseBtn = document.querySelector("#project-dialog-close");
+    this.taskCloseBtn = document.querySelector("#task-dialog-close");
     this.projectForm = document.querySelector("#add-project-form");
+    this.taskForm = document.querySelector("#add-task-form");
     this.projectContainer = document.querySelector(".project-container");
     this.deleteProjectBtn = document.querySelector("#delete-project-btn");
     this.contentContainer = document.querySelector(".content");
@@ -46,10 +50,16 @@ export default class UI {
 
   static bindEventHandler() {
     // Open Form to add project
-    this.addProjectBtn.addEventListener("click", UI.openModal.bind(this));
+    this.addProjectBtn.addEventListener(
+      "click",
+      UI.openProjectModal.bind(this)
+    );
 
     // Close Form
-    this.closeBtn.addEventListener("click", UI.closeModal.bind(this));
+    this.projectCloseBtn.addEventListener(
+      "click",
+      UI.closeProjectModal.bind(this)
+    );
 
     // Add a new project
     this.projectForm.addEventListener("submit", UI.addNewProject.bind(this));
@@ -74,15 +84,30 @@ export default class UI {
         // UI.showProjectContent(target);
       }
     });
+
+    // Open Form to add Task
+    this.addTaskBtn.addEventListener("click", UI.openTaskModal.bind(this));
+
+    // Close Form
+    this.taskCloseBtn.addEventListener("click", UI.closeTaskModal.bind(this));
   }
 
-  static openModal() {
+  static openProjectModal() {
     this.projectDialog.showModal();
   }
 
-  static closeModal() {
+  static closeProjectModal() {
     this.projectDialog.close();
     this.projectForm.reset();
+  }
+
+  static openTaskModal() {
+    this.taskDialog.showModal();
+  }
+
+  static closeTaskModal() {
+    this.taskDialog.close();
+    this.taskForm.reset();
   }
 
   static render() {
@@ -176,6 +201,7 @@ export default class UI {
     this.contentContainer.appendChild(projectTitle);
     this.contentContainer.appendChild(taskDiv);
     this.contentContainer.appendChild(addTaskBtn);
+    // this.contentContainer.appendChild(UI.createAddTaskForm());
   }
 
   static createTaskDiv(task) {
@@ -185,5 +211,26 @@ export default class UI {
     taskTitle.textContent = task.title;
     taskDiv.appendChild(taskTitle);
     return taskDiv;
+  }
+
+  static createAddTaskForm() {
+    const taskFormContainer = document.createElement("div");
+    const taskNameInput = document.createElement("input");
+    const taskDescription = document.createElement("textarea");
+
+    taskFormContainer.classList.add("task-form-container");
+    taskFormContainer.innerHTML =
+      "<div><input type='text' id='task-name' placeholder='Task name'></div>" +
+      "<div><textarea id='task-description' rows='1' placeholder='Description'></textarea></div>" +
+      "<div class='task-btn-container'><button>Cancel</button><button type='submit'>Add Task</button></div>";
+
+    taskNameInput.setAttribute("name", "task-name");
+    taskNameInput.setAttribute("id", "task-name");
+
+    taskDescription.setAttribute("id", "task-description");
+
+    // taskFormContainer.appendChild(taskNameInput);
+    // taskFormContainer.appendChild(taskDescription);
+    return taskFormContainer;
   }
 }

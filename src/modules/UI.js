@@ -40,12 +40,14 @@ export default class UI {
     this.addTaskBtn = document.querySelector("#add-task-btn");
     this.taskDialog = document.querySelector("#add-task-dialog");
     this.projectCloseBtn = document.querySelector("#project-dialog-close");
-    this.taskCloseBtn = document.querySelector("#task-dialog-close");
+    this.taskCloseBtn = document.querySelector(".task-dialog-close");
     this.projectForm = document.querySelector("#add-project-form");
     this.taskForm = document.querySelector("#add-task-form");
     this.projectContainer = document.querySelector(".project-container");
     this.deleteProjectBtn = document.querySelector("#delete-project-btn");
     this.contentContainer = document.querySelector(".content");
+
+    this.taskProjectSelector = document.querySelector("#task-project-select");
   }
 
   static bindEventHandler() {
@@ -63,6 +65,9 @@ export default class UI {
 
     // Add a new project
     this.projectForm.addEventListener("submit", UI.addNewProject.bind(this));
+
+    // Add a new task
+    this.taskForm.addEventListener("submit", UI.addNewTask.bind(this));
 
     // Delete project
     document.addEventListener("click", function (e) {
@@ -117,8 +122,17 @@ export default class UI {
         const color = project.color;
         project.render();
         UI.createProjectDiv(name, color);
+        UI.addProjectOption(name);
       }
     });
+  }
+
+  static addProjectOption(name) {
+    const option = document.createElement("option");
+    option.setAttribute("value", "name");
+    option.innerText = `${name}`;
+
+    this.taskProjectSelector.appendChild(option);
   }
 
   static createProjectDiv(name, color) {
@@ -160,6 +174,18 @@ export default class UI {
     this.projectForm.reset();
 
     UI.render();
+  }
+
+  static addNewTask(event) {
+    event.preventDefault();
+    const name = document.querySelector("#task-name").value;
+    const description = document.querySelector("#task-description").value;
+    const date = document.querySelector("#date").value;
+    const priority = document.querySelector("#priority").value;
+    const projectSelected = document.querySelector(
+      "#task-project-select"
+    ).value;
+    console.log(date);
   }
 
   static deleteProject(target) {

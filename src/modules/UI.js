@@ -129,8 +129,8 @@ export default class UI {
 
   static addProjectOption(name) {
     const option = document.createElement("option");
-    option.setAttribute("value", "name");
-    option.innerText = `${name}`;
+    option.setAttribute("value", name);
+    option.innerText = name;
 
     this.taskProjectSelector.appendChild(option);
   }
@@ -181,11 +181,20 @@ export default class UI {
     const name = document.querySelector("#task-name").value;
     const description = document.querySelector("#task-description").value;
     const date = document.querySelector("#date").value;
+    const dueDate = format(date, "MMM dd yyyy");
     const priority = document.querySelector("#priority").value;
     const projectSelected = document.querySelector(
       "#task-project-select"
     ).value;
-    console.log(date);
+
+    const task = createTask(name, description, dueDate, priority);
+    const project = UI.findProject(projectSelected);
+    project.toDoList.appendTask(task);
+
+    this.taskDialog.close();
+    this.taskForm.reset();
+
+    UI.showProjectContent(project);
   }
 
   static deleteProject(target) {
@@ -201,8 +210,15 @@ export default class UI {
     target.parentNode.remove();
   }
 
-  static findProject(target) {
-    const projectName = target.children[1].textContent;
+  static findProject(project) {
+    if (typeof project === "string") {
+      for (let i = 0; i < UI.projectArray.length; i++) {
+        if (project === UI.projectArray[i].name) {
+          return UI.projectArray[i];
+        }
+      }
+    }
+    const projectName = project.children[1].textContent;
     for (let i = 0; i < UI.projectArray.length; i++) {
       if (projectName === UI.projectArray[i].name) {
         return UI.projectArray[i];

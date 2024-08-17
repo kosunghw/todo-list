@@ -18,6 +18,14 @@ export default class TodoList {
   get length() {
     return this.taskArray.length;
   }
+
+  getTaskName() {
+    const newList = [];
+    this.taskArray.forEach((task) => {
+      newList.push(task.title);
+    });
+    return newList;
+  }
 }
 
 export function createTodoList() {

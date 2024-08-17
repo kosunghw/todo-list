@@ -14,6 +14,10 @@ export default class TodoList {
   get list() {
     return this.taskArray;
   }
+
+  get length() {
+    return this.taskArray.length;
+  }
 }
 
 export function createTodoList() {

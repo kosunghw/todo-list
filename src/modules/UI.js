@@ -5,6 +5,8 @@ import TodoList from "./TodoList";
 
 export default class UI {
   static projectArray = [];
+  static taskArray = [];
+
   static init() {
     UI.cacheDOM();
     UI.bindEventHandler();
@@ -14,18 +16,23 @@ export default class UI {
   static exampleProjects() {
     const exampleProject1 = createProject("Study", "black");
     const exampleProject2 = createProject("Work", "red");
+
     const exampleTask1 = createTask(
       "LeetCode",
       "Solve problems on LeetCode",
-      "08-24-2024",
+      "AUG 24 2024",
       "MEDIUM"
     );
     const exampleTask2 = createTask(
       "Todo List",
       "Solve problems on LeetCode",
-      "08-24-2024",
+      "AUG 11 2024",
       "MEDIUM"
     );
+
+    UI.taskArray.push(exampleTask1);
+    UI.taskArray.push(exampleTask2);
+
     exampleProject1.toDoList.appendTask(exampleTask1);
     exampleProject1.toDoList.appendTask(exampleTask2);
     UI.projectArray.push(exampleProject1);
@@ -35,16 +42,23 @@ export default class UI {
   }
 
   static cacheDOM() {
+    // Buttons
     this.addProjectBtn = document.querySelector("#add-project-btn");
-    this.projectDialog = document.querySelector("#add-project-dialog");
     this.addTaskBtn = document.querySelector("#add-task-btn");
-    this.taskDialog = document.querySelector("#add-task-dialog");
-    this.projectCloseBtn = document.querySelector("#project-dialog-close");
     this.taskCloseBtn = document.querySelector(".task-dialog-close");
+    this.deleteProjectBtn = document.querySelector("#delete-project-btn");
+    this.projectCloseBtn = document.querySelector("#project-dialog-close");
+
+    //Dialogs
+    this.projectDialog = document.querySelector("#add-project-dialog");
+    this.taskDialog = document.querySelector("#add-task-dialog");
+
+    // Forms
     this.projectForm = document.querySelector("#add-project-form");
     this.taskForm = document.querySelector("#add-task-form");
+
+    // Containers
     this.projectContainer = document.querySelector(".project-container");
-    this.deleteProjectBtn = document.querySelector("#delete-project-btn");
     this.contentContainer = document.querySelector(".content");
 
     this.taskProjectSelector = document.querySelector("#task-project-select");
@@ -95,6 +109,15 @@ export default class UI {
 
     // Close Form
     this.taskCloseBtn.addEventListener("click", UI.closeTaskModal.bind(this));
+
+    // Delete Task
+    document.addEventListener("click", function (e) {
+      const target = e.target.closest(".task-complete-btn");
+      if (target) {
+        UI.deleteTask(target);
+      }
+      e.stopPropagation();
+    });
   }
 
   static openProjectModal() {
@@ -190,6 +213,7 @@ export default class UI {
     const task = createTask(name, description, dueDate, priority);
     const project = UI.findProject(projectSelected);
     project.toDoList.appendTask(task);
+    UI.TodoList.appendTask(task);
 
     this.taskDialog.close();
     this.taskForm.reset();
@@ -200,25 +224,38 @@ export default class UI {
   static deleteProject(target) {
     console.log("delete button clicked");
     const projectName = target.parentNode.children[1].textContent;
-    UI.projectArray.forEach((project) => {
-      if (projectName === project.name) {
-        const index = UI.projectArray.indexOf(project);
-        UI.projectArray.splice(index, 1);
-      }
-    });
+    UI.projectArray = UI.projectArray.filter(
+      (project) => project.name !== projectName
+    );
+    console.log(UI.projectArray);
 
     target.parentNode.remove();
   }
 
-  static findProject(project) {
-    if (typeof project === "string") {
+  // Delete Task
+  static deleteTask(target) {
+    console.log("delete task button clicked");
+    const projectName = this.contentContainer.children[0].textContent;
+    const taskName = target.nextElementSibling.textContent;
+    const project = UI.findProject(projectName);
+    const projectTaskList = project.toDoList;
+
+    projectTaskList.deleteTask(taskName);
+    target.parentNode.remove();
+    console.log(projectTaskList);
+
+    UI.showProjectContent(project);
+  }
+
+  static findProject(target) {
+    if (typeof target === "string") {
       for (let i = 0; i < UI.projectArray.length; i++) {
-        if (project === UI.projectArray[i].name) {
+        if (target === UI.projectArray[i].name) {
           return UI.projectArray[i];
         }
       }
     }
-    const projectName = project.children[1].textContent;
+    const projectName = target.children[1].textContent;
     for (let i = 0; i < UI.projectArray.length; i++) {
       if (projectName === UI.projectArray[i].name) {
         return UI.projectArray[i];
@@ -226,32 +263,65 @@ export default class UI {
     }
   }
 
+  static findTask(target, project) {
+    if (typeof target === "string") {
+      for (let i = 0; i < project.toDoList.length; i++) {
+        if (target === project.toDoList.list[i].title) {
+          return project.toDoList.list[i];
+        }
+      }
+    }
+  }
+
   static showProjectContent(project) {
     this.contentContainer.innerHTML = "";
     const projectTitle = document.createElement("h1");
+    const taskNumber = document.createElement("div");
     const taskDiv = document.createElement("div");
-    const addTaskBtn = document.createElement("button");
 
+    projectTitle.classList.add("title"); // Project title
     projectTitle.textContent = project.name;
     if (project.toDoList.list.length > 0) {
       project.toDoList.list.forEach((task) => {
         taskDiv.appendChild(UI.createTaskDiv(task));
       });
     }
-    addTaskBtn.textContent = "Add Task";
+
+    taskNumber.classList.add("project-task-number");
+    if (project.toDoList.length < 2) {
+      taskNumber.textContent = `${project.toDoList.length} task`;
+    } else {
+      taskNumber.textContent = `${project.toDoList.length} tasks`;
+    }
+
+    taskDiv.classList.add("task-item-container");
 
     this.contentContainer.appendChild(projectTitle);
+    this.contentContainer.appendChild(taskNumber);
     this.contentContainer.appendChild(taskDiv);
-    this.contentContainer.appendChild(addTaskBtn);
     // this.contentContainer.appendChild(UI.createAddTaskForm());
   }
 
   static createTaskDiv(task) {
     const taskDiv = document.createElement("div");
     const taskTitle = document.createElement("div");
+    const taskDueDate = document.createElement("div");
+    const taskPriority = document.createElement("div");
+    const taskCompleteBtn = document.createElement("button");
+
+    taskCompleteBtn.classList.add("task-complete-btn");
+    taskDueDate.classList.add("task-due-date");
 
     taskTitle.textContent = task.title;
+    taskDueDate.textContent = task.dueDate;
+    taskPriority.textContent = task.priority;
+
+    taskDiv.classList.add("task-item");
+    taskDiv.appendChild(taskCompleteBtn);
     taskDiv.appendChild(taskTitle);
+    taskDiv.appendChild(taskPriority);
+    taskDiv.appendChild(taskDueDate);
+
     return taskDiv;
   }
 

@@ -5,7 +5,7 @@ import TodoList from "./TodoList";
 
 export default class UI {
   static projectArray = [];
-  static taskArray = [];
+  static inboxArray = new TodoList();
 
   static init() {
     UI.cacheDOM();
@@ -30,8 +30,8 @@ export default class UI {
       "MEDIUM"
     );
 
-    UI.taskArray.push(exampleTask1);
-    UI.taskArray.push(exampleTask2);
+    UI.inboxArray.appendTask(exampleTask1);
+    UI.inboxArray.appendTask(exampleTask2);
 
     exampleProject1.toDoList.appendTask(exampleTask1);
     exampleProject1.toDoList.appendTask(exampleTask2);
@@ -60,6 +60,11 @@ export default class UI {
     // Containers
     this.projectContainer = document.querySelector(".project-container");
     this.contentContainer = document.querySelector(".content");
+
+    // Nav bar
+    this.inbox = document.querySelector("#inbox");
+    this.today = document.querySelector("#today");
+    this.thisWeek = document.querySelector("#week");
 
     this.taskProjectSelector = document.querySelector("#task-project-select");
   }
@@ -103,6 +108,9 @@ export default class UI {
         // UI.showProjectContent(target);
       }
     });
+
+    // Click on inbox
+    this.inbox.addEventListener("click", UI.showInbox.bind(this));
 
     // Open Form to add Task
     this.addTaskBtn.addEventListener("click", UI.openTaskModal.bind(this));
@@ -156,6 +164,15 @@ export default class UI {
     option.innerText = name;
 
     this.taskProjectSelector.appendChild(option);
+  }
+
+  static deleteProjectOption(name) {
+    const options = this.taskProjectSelector.children;
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].textContent === name) {
+        options[i].remove();
+      }
+    }
   }
 
   static createProjectDiv(name, color) {
@@ -212,13 +229,16 @@ export default class UI {
 
     const task = createTask(name, description, dueDate, priority);
     const project = UI.findProject(projectSelected);
-    project.toDoList.appendTask(task);
-    UI.TodoList.appendTask(task);
+    if (project !== "inbox") {
+      project.toDoList.appendTask(task);
+      UI.showProjectContent(project);
+    }
+
+    UI.inboxArray.appendTask(task);
+    UI.showInbox();
 
     this.taskDialog.close();
     this.taskForm.reset();
-
-    UI.showProjectContent(project);
   }
 
   static deleteProject(target) {
@@ -230,25 +250,34 @@ export default class UI {
     console.log(UI.projectArray);
 
     target.parentNode.remove();
+    UI.deleteProjectOption(projectName);
   }
 
   // Delete Task
   static deleteTask(target) {
-    console.log("delete task button clicked");
-    const projectName = this.contentContainer.children[0].textContent;
     const taskName = target.nextElementSibling.textContent;
-    const project = UI.findProject(projectName);
-    const projectTaskList = project.toDoList;
+    const projectName = this.contentContainer.children[0].textContent;
 
-    projectTaskList.deleteTask(taskName);
-    target.parentNode.remove();
-    console.log(projectTaskList);
+    for (let i = 0; i < UI.projectArray.length; i++) {
+      let taskNameArray = UI.projectArray[i].toDoList.getTaskName();
+      if (taskNameArray.includes(taskName)) {
+        console.log("task in project");
+        UI.projectArray[i].toDoList.deleteTask(taskName);
+      }
+    }
+    UI.inboxArray.deleteTask(taskName);
 
-    UI.showProjectContent(project);
+    if (projectName === "Inbox") {
+      UI.showInbox();
+    } else {
+      UI.showProjectContent(UI.findProject(projectName));
+    }
   }
 
   static findProject(target) {
-    if (typeof target === "string") {
+    if (target === "inbox" || target === "Inbox") {
+      return "inbox";
+    } else if (typeof target === "string") {
       for (let i = 0; i < UI.projectArray.length; i++) {
         if (target === UI.projectArray[i].name) {
           return UI.projectArray[i];
@@ -300,6 +329,31 @@ export default class UI {
     this.contentContainer.appendChild(taskNumber);
     this.contentContainer.appendChild(taskDiv);
     // this.contentContainer.appendChild(UI.createAddTaskForm());
+  }
+
+  static showInbox() {
+    console.log("inbox clicked");
+    this.contentContainer.innerHTML = "";
+    const title = document.createElement("h1");
+    const taskNumber = document.createElement("div");
+    const taskDiv = document.createElement("div");
+
+    title.classList.add("title");
+    title.textContent = "Inbox";
+
+    for (let i = 0; i < UI.inboxArray.length; i++) {
+      taskDiv.appendChild(UI.createTaskDiv(UI.inboxArray.list[i]));
+    }
+
+    if (UI.inboxArray.length < 2) {
+      taskNumber.textContent = `${UI.inboxArray.length} task`;
+    } else {
+      taskNumber.textContent = `${UI.inboxArray.length} tasks`;
+    }
+
+    this.contentContainer.appendChild(title);
+    this.contentContainer.appendChild(taskNumber);
+    this.contentContainer.appendChild(taskDiv);
   }
 
   static createTaskDiv(task) {

@@ -20,15 +20,17 @@ export default class UI {
     const exampleTask1 = new Task(
       "LeetCode",
       "Solve problems on LeetCode",
-      "AUG 24 2024",
+      new Date("08-24-2024"),
       "MEDIUM"
     );
     const exampleTask2 = new Task(
       "Todo List",
       "Solve problems on LeetCode",
-      "AUG 11 2024",
+      new Date("08-11-2024"),
       "MEDIUM"
     );
+
+    // const workTask1 = new
 
     UI.inboxArray.appendTask(exampleTask1);
     UI.inboxArray.appendTask(exampleTask2);
@@ -370,7 +372,7 @@ export default class UI {
     taskDueDate.classList.add("task-due-date");
 
     taskTitle.textContent = task.title;
-    taskDueDate.textContent = task.dueDate;
+    taskDueDate.textContent = format(task.dueDate, "MMM do yyyy");
     taskPriority.textContent = task.priority;
 
     taskDiv.classList.add("task-item");

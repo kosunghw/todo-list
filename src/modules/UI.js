@@ -1,6 +1,6 @@
-import { format } from "date-fns";
-import Project, { createProject } from "./Project";
-import Task, { createTask } from "./Task";
+import { format, parse } from "date-fns";
+import Project from "./Project";
+import Task from "./Task";
 import TodoList from "./TodoList";
 
 export default class UI {
@@ -14,16 +14,16 @@ export default class UI {
   }
 
   static exampleProjects() {
-    const exampleProject1 = createProject("Study", "black");
-    const exampleProject2 = createProject("Work", "red");
+    const exampleProject1 = new Project("Study", "black");
+    const exampleProject2 = new Project("Work", "red");
 
-    const exampleTask1 = createTask(
+    const exampleTask1 = new Task(
       "LeetCode",
       "Solve problems on LeetCode",
       "AUG 24 2024",
       "MEDIUM"
     );
-    const exampleTask2 = createTask(
+    const exampleTask2 = new Task(
       "Todo List",
       "Solve problems on LeetCode",
       "AUG 11 2024",
@@ -207,7 +207,7 @@ export default class UI {
     ) {
       alert("Same project name exists");
     } else {
-      const newProject = createProject(name, color);
+      const newProject = new Project(name, color);
       UI.projectArray.push(newProject);
     }
     this.projectDialog.close();
@@ -220,22 +220,24 @@ export default class UI {
     event.preventDefault();
     const name = document.querySelector("#task-name").value;
     const description = document.querySelector("#task-description").value;
-    const date = document.querySelector("#date").value;
-    const dueDate = format(date, "MMM dd yyyy");
+    const date = document.querySelector("#date").value.split("-"); // ['YYYY', 'MM', 'DD']
+    // Reformat dates to get the correct date
+    const dueDate = new Date(`${date[1]}-${date[2]}-${date[0]}`);
     const priority = document.querySelector("#priority").value;
     const projectSelected = document.querySelector(
       "#task-project-select"
     ).value;
 
-    const task = createTask(name, description, dueDate, priority);
+    const task = new Task(name, description, dueDate, priority);
     const project = UI.findProject(projectSelected);
     if (project !== "inbox") {
       project.toDoList.appendTask(task);
+      UI.inboxArray.appendTask(task);
       UI.showProjectContent(project);
+    } else {
+      UI.inboxArray.appendTask(task);
+      UI.showInbox();
     }
-
-    UI.inboxArray.appendTask(task);
-    UI.showInbox();
 
     this.taskDialog.close();
     this.taskForm.reset();
@@ -303,6 +305,7 @@ export default class UI {
   }
 
   static showProjectContent(project) {
+    project.toDoList.sortByDueDate();
     this.contentContainer.innerHTML = "";
     const projectTitle = document.createElement("h1");
     const taskNumber = document.createElement("div");
@@ -332,7 +335,7 @@ export default class UI {
   }
 
   static showInbox() {
-    console.log("inbox clicked");
+    UI.inboxArray.sortByDueDate();
     this.contentContainer.innerHTML = "";
     const title = document.createElement("h1");
     const taskNumber = document.createElement("div");

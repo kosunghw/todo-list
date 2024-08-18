@@ -1,10 +1,11 @@
-import { format, parse } from "date-fns";
+import { format, compareAsc } from "date-fns";
 import Project from "./Project";
 import Task from "./Task";
 import TodoList from "./TodoList";
 
 export default class UI {
   static projectArray = [];
+  static allTaskArray = new TodoList();
   static inboxArray = new TodoList();
 
   static init() {
@@ -15,7 +16,7 @@ export default class UI {
 
   static exampleProjects() {
     const exampleProject1 = new Project("Study", "black");
-    const exampleProject2 = new Project("Work", "red");
+    const exampleProject2 = new Project("Grocery Shopping", "red");
 
     const exampleTask1 = new Task(
       "LeetCode",
@@ -30,13 +31,24 @@ export default class UI {
       "MEDIUM"
     );
 
-    // const workTask1 = new
+    const exampleTask3 = new Task(
+      "Buy Kitchen Towels",
+      "We are out of kitchen towels",
+      new Date("08-17-2024"),
+      "HIGH"
+    );
 
-    UI.inboxArray.appendTask(exampleTask1);
-    UI.inboxArray.appendTask(exampleTask2);
+    console.log(
+      compareAsc(exampleTask1.dueDate.getMonth(), new Date().getMonth())
+    );
+
+    UI.allTaskArray.appendTask(exampleTask1);
+    UI.allTaskArray.appendTask(exampleTask2);
+    UI.allTaskArray.appendTask(exampleTask3);
 
     exampleProject1.toDoList.appendTask(exampleTask1);
     exampleProject1.toDoList.appendTask(exampleTask2);
+    exampleProject2.toDoList.appendTask(exampleTask3);
     UI.projectArray.push(exampleProject1);
     UI.projectArray.push(exampleProject2);
     UI.render();
@@ -225,21 +237,21 @@ export default class UI {
     const date = document.querySelector("#date").value.split("-"); // ['YYYY', 'MM', 'DD']
     // Reformat dates to get the correct date
     const dueDate = new Date(`${date[1]}-${date[2]}-${date[0]}`);
-    const priority = document.querySelector("#priority").value;
+    const priority = document.querySelector("#priority").value.toUpperCase();
     const projectSelected = document.querySelector(
       "#task-project-select"
     ).value;
 
     const task = new Task(name, description, dueDate, priority);
-    const project = UI.findProject(projectSelected);
-    if (project !== "inbox") {
-      project.toDoList.appendTask(task);
-      UI.inboxArray.appendTask(task);
-      UI.showProjectContent(project);
-    } else {
+    if (projectSelected === "inbox") {
       UI.inboxArray.appendTask(task);
       UI.showInbox();
+    } else {
+      const project = UI.findProject(projectSelected);
+      project.toDoList.appendTask(task);
+      UI.showProjectContent(project);
     }
+    UI.allTaskArray.appendTask(task);
 
     this.taskDialog.close();
     this.taskForm.reset();
@@ -269,7 +281,7 @@ export default class UI {
         UI.projectArray[i].toDoList.deleteTask(taskName);
       }
     }
-    UI.inboxArray.deleteTask(taskName);
+    UI.allTaskArray.deleteTask(taskName);
 
     if (projectName === "Inbox") {
       UI.showInbox();
@@ -346,14 +358,15 @@ export default class UI {
     title.classList.add("title");
     title.textContent = "Inbox";
 
-    for (let i = 0; i < UI.inboxArray.length; i++) {
+    const inboxLength = UI.inboxArray.length;
+    for (let i = 0; i < inboxLength; i++) {
       taskDiv.appendChild(UI.createTaskDiv(UI.inboxArray.list[i]));
     }
 
-    if (UI.inboxArray.length < 2) {
-      taskNumber.textContent = `${UI.inboxArray.length} task`;
+    if (inboxLength < 2) {
+      taskNumber.textContent = `${inboxLength} task`;
     } else {
-      taskNumber.textContent = `${UI.inboxArray.length} tasks`;
+      taskNumber.textContent = `${inboxLength} tasks`;
     }
 
     this.contentContainer.appendChild(title);
@@ -372,7 +385,7 @@ export default class UI {
     taskDueDate.classList.add("task-due-date");
 
     taskTitle.textContent = task.title;
-    taskDueDate.textContent = format(task.dueDate, "MMM do yyyy");
+    taskDueDate.textContent = format(task.dueDate, "MMM do',' yyyy");
     taskPriority.textContent = task.priority;
 
     taskDiv.classList.add("task-item");
@@ -403,5 +416,10 @@ export default class UI {
     // taskFormContainer.appendChild(taskNameInput);
     // taskFormContainer.appendChild(taskDescription);
     return taskFormContainer;
+  }
+
+  static getTodayTask() {
+    const date = format(new Date(), "yyyy-mm-dd");
+    for (let i = 0; i < UI.allTaskArray.length; i++) {}
   }
 }

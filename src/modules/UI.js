@@ -124,7 +124,10 @@ export default class UI {
     });
 
     // Click on inbox
-    this.inbox.addEventListener("click", UI.showInbox.bind(this));
+    this.inbox.addEventListener("click", UI.showContent.bind(this));
+
+    // Click on Today
+    this.today.addEventListener("click", UI.showContent.bind(this));
 
     // Open Form to add Task
     this.addTaskBtn.addEventListener("click", UI.openTaskModal.bind(this));
@@ -258,12 +261,10 @@ export default class UI {
   }
 
   static deleteProject(target) {
-    console.log("delete button clicked");
     const projectName = target.parentNode.children[1].textContent;
     UI.projectArray = UI.projectArray.filter(
       (project) => project.name !== projectName
     );
-    console.log(UI.projectArray);
 
     target.parentNode.remove();
     UI.deleteProjectOption(projectName);
@@ -277,7 +278,6 @@ export default class UI {
     for (let i = 0; i < UI.projectArray.length; i++) {
       let taskNameArray = UI.projectArray[i].toDoList.getTaskName();
       if (taskNameArray.includes(taskName)) {
-        console.log("task in project");
         UI.projectArray[i].toDoList.deleteTask(taskName);
       }
     }
@@ -348,30 +348,49 @@ export default class UI {
     // this.contentContainer.appendChild(UI.createAddTaskForm());
   }
 
-  static showInbox() {
-    UI.inboxArray.sortByDueDate();
+  static showContent(event) {
+    const name = event.currentTarget.textContent;
     this.contentContainer.innerHTML = "";
     const title = document.createElement("h1");
     const taskNumber = document.createElement("div");
     const taskDiv = document.createElement("div");
 
     title.classList.add("title");
-    title.textContent = "Inbox";
+    if (name === "INBOX") {
+      UI.inboxArray.sortByDueDate();
+      title.textContent = "Inbox";
+      const length = UI.inboxArray.length;
+      for (let i = 0; i < length; i++) {
+        taskDiv.appendChild(UI.createTaskDiv(UI.inboxArray.list[i]));
+      }
+      if (length < 2) {
+        taskNumber.textContent = `${length} task`;
+      } else {
+        taskNumber.textContent = `${length} tasks`;
+      }
+    } else if (name === "TODAY") {
+      const todayTask = UI.getTodayTask();
+      const length = todayTask.length;
+      for (let i = 0; i < length; i++) {
+        taskDiv.appendChild(UI.createTaskDiv(todayTask.list[i]));
+      }
 
-    const inboxLength = UI.inboxArray.length;
-    for (let i = 0; i < inboxLength; i++) {
-      taskDiv.appendChild(UI.createTaskDiv(UI.inboxArray.list[i]));
-    }
+      title.textContent = "Today";
 
-    if (inboxLength < 2) {
-      taskNumber.textContent = `${inboxLength} task`;
-    } else {
-      taskNumber.textContent = `${inboxLength} tasks`;
+      if (length < 2) {
+        taskNumber.textContent = `${length} task`;
+      } else {
+        taskNumber.textContent = `${length} tasks`;
+      }
     }
 
     this.contentContainer.appendChild(title);
     this.contentContainer.appendChild(taskNumber);
     this.contentContainer.appendChild(taskDiv);
+  }
+
+  static showToday() {
+    console.log(UI.getTodayTask());
   }
 
   static createTaskDiv(task) {
@@ -418,8 +437,18 @@ export default class UI {
     return taskFormContainer;
   }
 
+  // Returns a list containing tasks that are due TODAY
   static getTodayTask() {
-    const date = format(new Date(), "yyyy-mm-dd");
-    for (let i = 0; i < UI.allTaskArray.length; i++) {}
+    const date = new Date().getMonth() + new Date().getDate();
+    const list = new TodoList();
+    for (let i = 0; i < UI.allTaskArray.length; i++) {
+      const dueDate =
+        UI.allTaskArray.list[i].dueDate.getMonth() +
+        UI.allTaskArray.list[i].dueDate.getDate();
+      if (date === dueDate) {
+        list.appendTask(UI.allTaskArray.list[i]);
+      }
+    }
+    return list;
   }
 }

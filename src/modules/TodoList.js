@@ -1,3 +1,5 @@
+import { compareAsc } from "date-fns";
+
 export default class TodoList {
   constructor() {
     this.taskArray = new Array();
@@ -26,8 +28,12 @@ export default class TodoList {
     });
     return newList;
   }
+
+  sortByDueDate() {
+    this.taskArray.sort(compareDueDates);
+  }
 }
 
-export function createTodoList() {
-  return new TodoList();
+function compareDueDates(task1, task2) {
+  return compareAsc(task1.dueDate, task2.dueDate);
 }

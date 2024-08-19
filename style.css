@@ -1,0 +1,195 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  position: relative;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 6fr;
+  height: 100%;
+}
+
+.nav-bar {
+  border: 1px solid blue;
+  height: 100%;
+  padding: 10px;
+}
+
+.content {
+  padding: 20px;
+  border: 1px solid red;
+  height: 100%;
+}
+
+.project-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.project-container-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#inbox:hover,
+#today:hover,
+#week:hover {
+  background-color: rgb(216, 216, 216);
+  cursor: pointer;
+}
+
+#delete-project-btn {
+  margin-left: auto;
+}
+
+.project-container-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+span.black::before,
+span.red::before,
+span.green::before {
+  font-family: "Matemasie";
+  font-size: 20px;
+}
+
+span.black::before {
+  content: "#";
+  color: black;
+}
+
+span.red::before {
+  content: "#";
+  color: red;
+}
+
+span.green::before {
+  content: "#";
+  color: green;
+}
+
+#projects {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+button#add-project-btn {
+  border: none;
+  background-color: inherit;
+  cursor: pointer;
+  padding: 5px;
+}
+
+button#add-project-btn:hover {
+  background-color: lightblue;
+}
+
+button#add-project-btn span.icon {
+  background: url(images/plus-icon.png) no-repeat;
+  float: left;
+  width: 25px;
+  height: 25px;
+}
+
+.hide {
+  display: none;
+}
+
+.project-container-item:hover {
+  background-color: rgb(216, 216, 216);
+  cursor: pointer;
+}
+
+.project-container-item:hover > .hide {
+  display: block;
+}
+
+button#delete-project-btn:hover {
+  cursor: pointer;
+}
+
+dialog#add-project-dialog {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 500px;
+  width: 400px;
+}
+
+.form-input {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 5px;
+}
+
+.modal-title {
+  border-bottom: 1px solid #000;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.content-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 50px 1fr;
+}
+
+.header {
+  grid-row: 1;
+  grid-column: 1/4;
+}
+
+input#task-name {
+  font-size: 14px;
+  width: 100%;
+}
+
+textarea#task-description {
+  font-size: 12px;
+  width: 100%;
+}
+
+.task-form-container {
+  width: 500px;
+}
+
+.task-btn-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.task-item-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+.task-item {
+  display: flex;
+  gap: 10px;
+}
+
+.task-complete-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.task-due-date {
+  margin-left: auto;
+}

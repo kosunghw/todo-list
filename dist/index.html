@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToDo List</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="main.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Matemasie&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="nav-bar">
+        <div id="logo">LOGO</div>
+        <div id="add-task-btn">
+          <button>Add Task</button>
+        </div>
+        <div id="inbox">INBOX</div>
+        <div id="today">TODAY</div>
+        <div id="week">THIS WEEK</div>
+        <div class="project-container">
+          <div class="project-container-title">
+            <div id="projects">My projects</div>
+            <button id="add-project-btn"><span class="icon"></span></button>
+          </div>
+        </div>
+      </div>
+      <div class="content-container">
+        <div class="header"></div>
+        <div class="left-panel"></div>
+        <div class="content"></div>
+        <div class="right-panel"></div>
+      </div>
+    </div>
+    <!-- Add project dialog -->
+    <dialog id="add-project-dialog">
+      <form action="#" id="add-project-form" method="get">
+        <div class="modal-title">
+          <span>Add Project</span>
+          <button id="project-dialog-close" type="button">&times;</button>
+        </div>
+        <div class="form-input">
+          <label for="project-name">Name</label>
+          <input type="text" name="project-name" id="project-name" />
+        </div>
+        <div class="form-input">
+          <label for="project-color">Color</label>
+          <select name="project-color" id="project-color">
+            <option value="black">black</option>
+            <option value="red">red</option>
+            <option value="green">green</option>
+          </select>
+        </div>
+        <div class="form-input">
+          <button type="submit">Add project</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Add task dialog -->
+    <dialog id="add-task-dialog">
+      <form action="#" id="add-task-form" method="post">
+        <div class="modal-title">
+          <span>Add task</span>
+        </div>
+        <div class="form-input">
+          <input required type="text" id="task-name" placeholder="Task name" />
+        </div>
+        <div class="form-input">
+          <textarea
+            id="task-description"
+            rows="1"
+            placeholder="Description"
+          ></textarea>
+        </div>
+        <div class="form-input">
+          <input required type="date" id="date" />
+          <select required name="priority" id="priority">
+            <option value="" disabled selected>Priority</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+          <select required name="task-project-select" id="task-project-select">
+            <option value="inbox">Inbox</option>
+          </select>
+        </div>
+        <div class="form-input">
+          <button type="button" class="task-dialog-close">Cancel</button>
+          <button type="submit">Add Task</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

@@ -22,20 +22,23 @@ export default class UI {
       "LeetCode",
       "Solve problems on LeetCode",
       new Date("08-24-2024"),
-      "MEDIUM"
+      "MEDIUM",
+      "Study"
     );
     const exampleTask2 = new Task(
       "Todo List",
       "Solve problems on LeetCode",
       new Date("08-19-2024"),
-      "MEDIUM"
+      "MEDIUM",
+      "Study"
     );
 
     const exampleTask3 = new Task(
       "Buy Kitchen Towels",
       "We are out of kitchen towels",
       new Date("08-19-2024"),
-      "HIGH"
+      "HIGH",
+      "Grocery Shopping"
     );
 
     UI.allTaskArray.appendTask(exampleTask1);
@@ -136,9 +139,12 @@ export default class UI {
 
     // Delete Task
     document.addEventListener("click", function (e) {
-      const target = e.target.closest(".task-complete-btn");
-      if (target) {
-        UI.deleteTask(target);
+      const completeBtn = e.target.closest(".task-complete-btn");
+      const deleteBtn = e.target.closest(".task-delete-btn");
+      if (completeBtn) {
+        UI.deleteTask(completeBtn);
+      } else if (deleteBtn) {
+        UI.deleteTask(deleteBtn);
       }
       e.stopPropagation();
     });
@@ -244,11 +250,17 @@ export default class UI {
       "#task-project-select"
     ).value;
 
-    const task = new Task(name, description, dueDate, priority);
+    const task = new Task(
+      name,
+      description,
+      dueDate,
+      priority,
+      projectSelected
+    );
     if (projectSelected === "inbox") {
       UI.inboxArray.appendTask(task);
       UI.inboxArray.sortByDueDate();
-      UI.showInbox();
+      UI.showContent("Inbox");
     } else {
       const project = UI.findProject(projectSelected);
       project.toDoList.appendTask(task);
@@ -272,8 +284,14 @@ export default class UI {
 
   // Delete Task
   static deleteTask(target) {
-    const taskName = target.nextElementSibling.textContent;
-    const projectName = this.contentContainer.children[0].textContent;
+    let taskName;
+    let projectName = this.contentContainer.children[0].textContent;
+    console.log(projectName);
+    if (target.id === "task-complete-btn") {
+      taskName = target.nextElementSibling.textContent;
+    } else if (target.id === "task-delete-btn") {
+      taskName = target.parentNode.children[1].textContent;
+    }
 
     for (let i = 0; i < UI.projectArray.length; i++) {
       let taskNameArray = UI.projectArray[i].toDoList.getTaskName();
@@ -284,7 +302,11 @@ export default class UI {
     UI.allTaskArray.deleteTask(taskName);
 
     if (projectName === "Inbox") {
-      UI.showInbox();
+      UI.showContent("Inbox");
+    } else if (projectName === "Today") {
+      UI.showContent("Today");
+    } else if (projectName === "Next 7 Days") {
+      UI.showContent("Next 7 days");
     } else {
       UI.showProjectContent(UI.findProject(projectName));
     }
@@ -349,7 +371,12 @@ export default class UI {
   }
 
   static showContent(event) {
-    const name = event.currentTarget.textContent;
+    let name;
+    if (typeof event !== "string") {
+      name = event.currentTarget.textContent;
+    } else {
+      name = event;
+    }
     this.contentContainer.innerHTML = "";
     const title = document.createElement("h1");
     const taskNumber = document.createElement("div");
@@ -388,19 +415,37 @@ export default class UI {
     const taskTitle = document.createElement("div");
     const taskDueDate = document.createElement("div");
     const taskPriority = document.createElement("div");
+    const taskProject = document.createElement("div");
     const taskCompleteBtn = document.createElement("button");
+    const taskDeleteBtn = document.createElement("button");
+    const taskEditBtn = document.createElement("button");
 
     taskCompleteBtn.classList.add("task-complete-btn");
+    taskDeleteBtn.classList.add("task-delete-btn");
+    taskEditBtn.classList.add("task-edit-btn");
     taskDueDate.classList.add("task-due-date");
+
+    // Add text content to delete and edit button
+    taskDeleteBtn.textContent = "delete";
+    taskEditBtn.textContent = "edit";
+
+    // Set ids to buttons
+    taskCompleteBtn.setAttribute("id", "task-complete-btn");
+    taskDeleteBtn.setAttribute("id", "task-delete-btn");
+    taskEditBtn.setAttribute("id", "task-edit-btn");
 
     taskTitle.textContent = task.title;
     taskDueDate.textContent = format(task.dueDate, "MMM do',' yyyy");
     taskPriority.textContent = task.priority;
+    taskProject.textContent = `#${task.project}`;
 
     taskDiv.classList.add("task-item");
     taskDiv.appendChild(taskCompleteBtn);
     taskDiv.appendChild(taskTitle);
     taskDiv.appendChild(taskPriority);
+    taskDiv.appendChild(taskProject);
+    taskDiv.appendChild(taskEditBtn);
+    taskDiv.appendChild(taskDeleteBtn);
     taskDiv.appendChild(taskDueDate);
 
     return taskDiv;

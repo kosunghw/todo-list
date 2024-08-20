@@ -38,10 +38,6 @@ export default class UI {
       "HIGH"
     );
 
-    console.log(
-      compareAsc(exampleTask1.dueDate.getMonth(), new Date().getMonth())
-    );
-
     UI.allTaskArray.appendTask(exampleTask1);
     UI.allTaskArray.appendTask(exampleTask2);
     UI.allTaskArray.appendTask(exampleTask3);
@@ -369,9 +365,9 @@ export default class UI {
       title.textContent = "Today";
     } else if (name === "Next 7 days") {
       title.textContent = "Next 7 Days";
-      taskArray = [];
+      taskArray = UI.allTaskArray;
+      taskArray.filterBySeven();
     }
-
     const length = taskArray.length;
     for (let i = 0; i < length; i++) {
       taskDiv.appendChild(UI.createTaskDiv(taskArray.list[i]));
@@ -385,10 +381,6 @@ export default class UI {
     this.contentContainer.appendChild(title);
     this.contentContainer.appendChild(taskNumber);
     this.contentContainer.appendChild(taskDiv);
-  }
-
-  static showToday() {
-    console.log(UI.getTodayTask());
   }
 
   static createTaskDiv(task) {

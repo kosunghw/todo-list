@@ -27,14 +27,14 @@ export default class UI {
     const exampleTask2 = new Task(
       "Todo List",
       "Solve problems on LeetCode",
-      new Date("08-11-2024"),
+      new Date("08-19-2024"),
       "MEDIUM"
     );
 
     const exampleTask3 = new Task(
       "Buy Kitchen Towels",
       "We are out of kitchen towels",
-      new Date("08-17-2024"),
+      new Date("08-19-2024"),
       "HIGH"
     );
 
@@ -128,6 +128,9 @@ export default class UI {
 
     // Click on Today
     this.today.addEventListener("click", UI.showContent.bind(this));
+
+    // CLick on Next 7 days
+    this.thisWeek.addEventListener("click", UI.showContent.bind(this));
 
     // Open Form to add Task
     this.addTaskBtn.addEventListener("click", UI.openTaskModal.bind(this));
@@ -248,6 +251,7 @@ export default class UI {
     const task = new Task(name, description, dueDate, priority);
     if (projectSelected === "inbox") {
       UI.inboxArray.appendTask(task);
+      UI.inboxArray.sortByDueDate();
       UI.showInbox();
     } else {
       const project = UI.findProject(projectSelected);
@@ -356,32 +360,26 @@ export default class UI {
     const taskDiv = document.createElement("div");
 
     title.classList.add("title");
-    if (name === "INBOX") {
-      UI.inboxArray.sortByDueDate();
+    let taskArray;
+    if (name === "Inbox") {
+      taskArray = UI.inboxArray;
       title.textContent = "Inbox";
-      const length = UI.inboxArray.length;
-      for (let i = 0; i < length; i++) {
-        taskDiv.appendChild(UI.createTaskDiv(UI.inboxArray.list[i]));
-      }
-      if (length < 2) {
-        taskNumber.textContent = `${length} task`;
-      } else {
-        taskNumber.textContent = `${length} tasks`;
-      }
-    } else if (name === "TODAY") {
-      const todayTask = UI.getTodayTask();
-      const length = todayTask.length;
-      for (let i = 0; i < length; i++) {
-        taskDiv.appendChild(UI.createTaskDiv(todayTask.list[i]));
-      }
-
+    } else if (name === "Today") {
+      taskArray = UI.getTodayTask();
       title.textContent = "Today";
+    } else if (name === "Next 7 days") {
+      title.textContent = "Next 7 Days";
+      taskArray = [];
+    }
 
-      if (length < 2) {
-        taskNumber.textContent = `${length} task`;
-      } else {
-        taskNumber.textContent = `${length} tasks`;
-      }
+    const length = taskArray.length;
+    for (let i = 0; i < length; i++) {
+      taskDiv.appendChild(UI.createTaskDiv(taskArray.list[i]));
+    }
+    if (length < 2) {
+      taskNumber.textContent = `${length} task`;
+    } else {
+      taskNumber.textContent = `${length} tasks`;
     }
 
     this.contentContainer.appendChild(title);

@@ -1,11 +1,12 @@
 import { format } from "date-fns";
 
 export default class Task {
-  constructor(title, description, dueDate, priority) {
+  constructor(title, description, dueDate, priority, project) {
     this.title = title;
     this.description = description;
     this.dueDate = dueDate;
     this.priority = priority;
+    this.project = project;
     this.completed = false;
   }
 
@@ -30,6 +31,6 @@ export default class Task {
   }
 }
 
-export function createTask(title, description, dueDate, priority) {
-  return new Task(title, description, dueDate, priority);
+export function createTask(title, description, dueDate, priority, project) {
+  return new Task(title, description, dueDate, priority, project);
 }

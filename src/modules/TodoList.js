@@ -1,4 +1,4 @@
-import { compareAsc } from "date-fns";
+import { compareAsc, format } from "date-fns";
 
 export default class TodoList {
   constructor() {
@@ -31,6 +31,20 @@ export default class TodoList {
 
   sortByDueDate() {
     this.taskArray.sort(compareDueDates);
+  }
+
+  filterBySeven() {
+    this.taskArray = this.taskArray.filter((element) => {
+      const today = new Date();
+      const sevenDay = today.setDate(today.getDate() + 7); // Next 7 day in Date object format
+      const sevenDayStr = format(sevenDay, "yyMMdd"); // in format of 'yymmdd' (240831)
+      console.log(sevenDayStr);
+      const taskDueDate = format(element.dueDate, "yyMMdd");
+      console.log(taskDueDate);
+      const dayDiff = sevenDayStr - taskDueDate;
+      console.log(dayDiff);
+      return 0 <= dayDiff && dayDiff <= 7;
+    });
   }
 }
 

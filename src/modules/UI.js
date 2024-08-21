@@ -27,8 +27,8 @@ export default class UI {
     );
     const exampleTask2 = new Task(
       "Todo List",
-      "Solve problems on LeetCode",
-      new Date("08-19-2024"),
+      "Finish Todo LIst",
+      new Date("08-20-2024"),
       "MEDIUM",
       "Study"
     );
@@ -36,7 +36,7 @@ export default class UI {
     const exampleTask3 = new Task(
       "Buy Kitchen Towels",
       "We are out of kitchen towels",
-      new Date("08-19-2024"),
+      new Date("08-20-2024"),
       "HIGH",
       "Grocery Shopping"
     );
@@ -51,7 +51,7 @@ export default class UI {
     UI.projectArray.push(exampleProject1);
     UI.projectArray.push(exampleProject2);
     UI.render();
-    UI.showProjectContent(exampleProject1);
+    UI.showContent("Study");
   }
 
   static cacheDOM() {
@@ -101,53 +101,34 @@ export default class UI {
     // Add a new task
     this.taskForm.addEventListener("submit", UI.addNewTask.bind(this));
 
-    // Delete project
+    // Click on nav bar
     document.addEventListener("click", function (e) {
-      const target = e.target.closest("#delete-project-btn");
+      const projectNav = e.target.closest(".project-container-item");
+      const nav = e.target.closest(".nav-item");
+      const completeBtn = e.target.closest(".task-complete-btn");
+      const deleteBtn = e.target.closest(".task-delete-btn");
+      const deleteProjectBtn = e.target.closest("#delete-project-btn");
 
-      if (target) {
-        UI.deleteProject(target);
+      if (projectNav && !e.target.matches("button")) {
+        const project = UI.findProject(projectNav);
+        UI.showContent(project.name);
+      } else if (nav) {
+        UI.showContent(nav.textContent);
+      } else if (completeBtn) {
+        UI.deleteTask(completeBtn);
+      } else if (deleteBtn) {
+        UI.deleteTask(deleteBtn);
+      } else if (deleteProjectBtn) {
+        UI.deleteProject(deleteProjectBtn);
       }
       e.stopPropagation();
     });
-
-    // Click on project
-    document.addEventListener("click", function (e) {
-      const target = e.target.closest(".project-container-item");
-      if (target && !e.target.matches("button")) {
-        const project = UI.findProject(target);
-        UI.showProjectContent(project);
-
-        // UI.showProjectContent(target);
-      }
-    });
-
-    // Click on inbox
-    this.inbox.addEventListener("click", UI.showContent.bind(this));
-
-    // Click on Today
-    this.today.addEventListener("click", UI.showContent.bind(this));
-
-    // CLick on Next 7 days
-    this.thisWeek.addEventListener("click", UI.showContent.bind(this));
 
     // Open Form to add Task
     this.addTaskBtn.addEventListener("click", UI.openTaskModal.bind(this));
 
     // Close Form
     this.taskCloseBtn.addEventListener("click", UI.closeTaskModal.bind(this));
-
-    // Delete Task
-    document.addEventListener("click", function (e) {
-      const completeBtn = e.target.closest(".task-complete-btn");
-      const deleteBtn = e.target.closest(".task-delete-btn");
-      if (completeBtn) {
-        UI.deleteTask(completeBtn);
-      } else if (deleteBtn) {
-        UI.deleteTask(deleteBtn);
-      }
-      e.stopPropagation();
-    });
   }
 
   static openProjectModal() {
@@ -188,6 +169,7 @@ export default class UI {
     this.taskProjectSelector.appendChild(option);
   }
 
+  // Delete Project from select input when adding a task
   static deleteProjectOption(name) {
     const options = this.taskProjectSelector.children;
     for (let i = 0; i < options.length; i++) {
@@ -236,6 +218,7 @@ export default class UI {
     this.projectForm.reset();
 
     UI.render();
+    UI.showContent(name);
   }
 
   static addNewTask(event) {
@@ -264,7 +247,7 @@ export default class UI {
     } else {
       const project = UI.findProject(projectSelected);
       project.toDoList.appendTask(task);
-      UI.showProjectContent(project);
+      UI.showContent(projectSelected);
     }
     UI.allTaskArray.appendTask(task);
 
@@ -274,9 +257,30 @@ export default class UI {
 
   static deleteProject(target) {
     const projectName = target.parentNode.children[1].textContent;
+    const containerName = this.contentContainer.children[0].textContent;
+
+    // Remove tasks that are in deleted project from all task array
+    let length = UI.allTaskArray.length;
+    let index = 0;
+    while (index < length) {
+      if (UI.allTaskArray.list[index].project === projectName) {
+        const taskTitle = UI.allTaskArray.list[index].title;
+        UI.allTaskArray.deleteTask(taskTitle);
+        length--;
+      } else {
+        index++;
+      }
+    }
     UI.projectArray = UI.projectArray.filter(
       (project) => project.name !== projectName
     );
+
+    // If deleted project was showing and project array is not empty
+    if (projectName === containerName && UI.projectArray.length > 0) {
+      UI.showContent(UI.projectArray[0].name);
+    } else {
+      UI.showContent("Inbox");
+    }
 
     target.parentNode.remove();
     UI.deleteProjectOption(projectName);
@@ -286,7 +290,6 @@ export default class UI {
   static deleteTask(target) {
     let taskName;
     let projectName = this.contentContainer.children[0].textContent;
-    console.log(projectName);
     if (target.id === "task-complete-btn") {
       taskName = target.nextElementSibling.textContent;
     } else if (target.id === "task-delete-btn") {
@@ -308,14 +311,12 @@ export default class UI {
     } else if (projectName === "Next 7 Days") {
       UI.showContent("Next 7 days");
     } else {
-      UI.showProjectContent(UI.findProject(projectName));
+      UI.showContent(projectName);
     }
   }
 
   static findProject(target) {
-    if (target === "inbox" || target === "Inbox") {
-      return "inbox";
-    } else if (typeof target === "string") {
+    if (typeof target === "string") {
       for (let i = 0; i < UI.projectArray.length; i++) {
         if (target === UI.projectArray[i].name) {
           return UI.projectArray[i];
@@ -338,36 +339,6 @@ export default class UI {
         }
       }
     }
-  }
-
-  static showProjectContent(project) {
-    project.toDoList.sortByDueDate();
-    this.contentContainer.innerHTML = "";
-    const projectTitle = document.createElement("h1");
-    const taskNumber = document.createElement("div");
-    const taskDiv = document.createElement("div");
-
-    projectTitle.classList.add("title"); // Project title
-    projectTitle.textContent = project.name;
-    if (project.toDoList.list.length > 0) {
-      project.toDoList.list.forEach((task) => {
-        taskDiv.appendChild(UI.createTaskDiv(task));
-      });
-    }
-
-    taskNumber.classList.add("project-task-number");
-    if (project.toDoList.length < 2) {
-      taskNumber.textContent = `${project.toDoList.length} task`;
-    } else {
-      taskNumber.textContent = `${project.toDoList.length} tasks`;
-    }
-
-    taskDiv.classList.add("task-item-container");
-
-    this.contentContainer.appendChild(projectTitle);
-    this.contentContainer.appendChild(taskNumber);
-    this.contentContainer.appendChild(taskDiv);
-    // this.contentContainer.appendChild(UI.createAddTaskForm());
   }
 
   static showContent(event) {
@@ -394,6 +365,9 @@ export default class UI {
       title.textContent = "Next 7 Days";
       taskArray = UI.allTaskArray;
       taskArray.filterBySeven();
+    } else {
+      title.textContent = name;
+      taskArray = UI.findProject(name).toDoList;
     }
     const length = taskArray.length;
     for (let i = 0; i < length; i++) {
@@ -404,6 +378,7 @@ export default class UI {
     } else {
       taskNumber.textContent = `${length} tasks`;
     }
+    taskDiv.classList.add("task-item-container");
 
     this.contentContainer.appendChild(title);
     this.contentContainer.appendChild(taskNumber);

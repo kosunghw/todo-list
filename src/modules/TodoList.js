@@ -10,7 +10,9 @@ export default class TodoList {
   }
 
   deleteTask(taskTitle) {
-    this.taskArray = this.taskArray.filter((task) => task.title !== taskTitle);
+    this.taskArray = this.taskArray.filter((task) => {
+      return task.title !== taskTitle;
+    });
   }
 
   get list() {
@@ -19,6 +21,10 @@ export default class TodoList {
 
   get length() {
     return this.taskArray.length;
+  }
+
+  empty() {
+    this.taskArray = [];
   }
 
   getTaskName() {

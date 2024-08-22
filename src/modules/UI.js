@@ -55,7 +55,6 @@ export default class UI {
     this.addProjectBtn = document.querySelector("#add-project-btn");
     this.addTaskBtn = document.querySelector("#add-task-btn");
     this.taskCloseBtn = document.querySelector(".task-dialog-close");
-    this.deleteProjectBtn = document.querySelector("#delete-project-btn");
     this.projectCloseBtn = document.querySelector("#project-dialog-close");
 
     //Dialogs
@@ -106,22 +105,23 @@ export default class UI {
     // Click on dynamically created elements
     document.addEventListener("click", function (e) {
       const projectNav = e.target.closest(".project-container-item");
-      const nav = e.target.closest(".nav-item");
+      const nav = e.target.closest(".nav-item-container");
       const completeBtn = e.target.closest(".task-complete-btn");
       const deleteTaskBtn = e.target.closest(".task-delete-btn");
-      const deleteProjectBtn = e.target.closest("#delete-project-btn");
-      const editTaskBtn = e.target.closest(".task-edit-btn");
+      const deleteProjectBtn = e.target.closest(".delete-project-btn");
+      // const editTaskBtn = e.target.closest(".task-edit-btn");
 
       if (projectNav && !e.target.matches("button")) {
         const project = UI.findProject(projectNav);
         UI.showContent(project.name);
       } else if (nav) {
-        UI.showContent(nav.textContent);
+        UI.showContent(nav.children[1].textContent);
       } else if (completeBtn) {
         UI.deleteTask(completeBtn);
       } else if (deleteTaskBtn) {
         UI.deleteTask(deleteTaskBtn);
       } else if (deleteProjectBtn) {
+        console.log(deleteProjectBtn);
         UI.deleteProject(deleteProjectBtn);
       }
       e.stopPropagation();
@@ -183,9 +183,9 @@ export default class UI {
 
     projectName.classList.add("project-name");
     projectName.textContent = name;
-    deleteBtn.setAttribute("id", "delete-project-btn");
+    deleteBtn.innerHTML = `<?xml version="1.0" encoding="iso-8859-1"?><!-- Generator: Adobe Illustrator 19.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  --><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16" width="16px" height="16px"><path style="fill:none;stroke:#000000;stroke-miterlimit:10;" d="M11.5,4v8.5c0,0.552-0.448,1-1,1h-6c-0.552,0-1-0.448-1-1V4"/><line style="fill:none;stroke:#000000;stroke-miterlimit:10;" x1="5.5" y1="5" x2="5.5" y2="12"/><line style="fill:none;stroke:#000000;stroke-miterlimit:10;" x1="7.5" y1="5" x2="7.5" y2="12"/><line style="fill:none;stroke:#000000;stroke-miterlimit:10;" x1="9.5" y1="5" x2="9.5" y2="12"/><line style="fill:none;stroke:#000000;stroke-miterlimit:10;" x1="2" y1="3.5" x2="13" y2="3.5"/><path style="fill:none;stroke:#000000;stroke-linecap:square;stroke-miterlimit:10;" d="M9.5,3.5V2.497C9.5,1.946,9.054,1.5,8.503,1.5H6.497C5.946,1.5,5.5,1.946,5.5,2.497V3.5"/></svg>`;
+    deleteBtn.classList.add("delete-project-btn");
     deleteBtn.classList.add("hide");
-    deleteBtn.textContent = "delete";
 
     projectItem.classList.add("project-container-item");
     projectItem.innerHTML = `<span class="${color}"></span>`;
@@ -255,6 +255,8 @@ export default class UI {
   static deleteProject(target) {
     const projectName = target.parentNode.children[1].textContent;
     const containerName = this.contentContainer.children[0].textContent;
+    console.log(projectName);
+    console.log(containerName);
 
     // Remove tasks that are in deleted project from all task array
     // let length = UI.allTaskArray().length;
@@ -301,7 +303,6 @@ export default class UI {
         UI.projectArray[i].toDoList.deleteTask(taskName);
       }
     }
-    // UI.allTaskArray.deleteTask(taskName);
 
     if (projectName === "Inbox") {
       UI.showContent("Inbox");
@@ -387,6 +388,7 @@ export default class UI {
   static createTaskDiv(task) {
     const taskDiv = document.createElement("div");
     const taskTitle = document.createElement("div");
+    const taskDescription = document.createElement("div");
     const taskDueDate = document.createElement("div");
     const taskPriority = document.createElement("div");
     const taskProject = document.createElement("div");
@@ -394,10 +396,20 @@ export default class UI {
     const taskDeleteBtn = document.createElement("button");
     const taskEditBtn = document.createElement("button");
 
+    taskTitle.classList.add("task-title");
+    taskDescription.classList.add("task-description");
     taskCompleteBtn.classList.add("task-complete-btn");
     taskDeleteBtn.classList.add("task-delete-btn");
     taskEditBtn.classList.add("task-edit-btn");
     taskDueDate.classList.add("task-due-date");
+
+    if (task.priority === "HIGH") {
+      taskPriority.classList.add("task-priority-high");
+    } else if (task.priority === "MEDIUM") {
+      taskPriority.classList.add("task-priority-medium");
+    } else {
+      taskPriority.classList.add("task-priority-low");
+    }
 
     // Add text content to delete and edit button
     taskDeleteBtn.textContent = "delete";
@@ -406,12 +418,14 @@ export default class UI {
     // Set ids to buttons
 
     taskTitle.textContent = task.title;
+    taskDescription.textContent = task.description;
     taskDueDate.textContent = format(task.dueDate, "MMM do',' yyyy");
     taskPriority.textContent = task.priority;
     taskProject.textContent = `#${task.project}`;
 
     taskDiv.classList.add("task-item");
     taskDiv.appendChild(taskCompleteBtn);
+    taskDiv.appendChild(taskDescription);
     taskDiv.appendChild(taskTitle);
     taskDiv.appendChild(taskPriority);
     taskDiv.appendChild(taskProject);

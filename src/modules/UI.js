@@ -108,10 +108,11 @@ export default class UI {
       const nav = e.target.closest(".nav-item-container");
       const completeBtn = e.target.closest(".task-complete-btn");
       const deleteTaskBtn = e.target.closest(".task-delete-btn");
-      const deleteProjectBtn = e.target.closest(".delete-project-btn");
+      const deleteProjectBtn = e.target.closest(".project-delete-btn");
       // const editTaskBtn = e.target.closest(".task-edit-btn");
+      // console.log(e.target);
 
-      if (projectNav && !e.target.matches("button")) {
+      if (projectNav && !e.target.matches(".delete-project-btn")) {
         const project = UI.findProject(projectNav);
         UI.showContent(project.name);
       } else if (nav) {
@@ -120,8 +121,7 @@ export default class UI {
         UI.deleteTask(completeBtn);
       } else if (deleteTaskBtn) {
         UI.deleteTask(deleteTaskBtn);
-      } else if (deleteProjectBtn) {
-        console.log(deleteProjectBtn);
+      } else if (e.target.matches(".delete-project-btn")) {
         UI.deleteProject(deleteProjectBtn);
       }
       e.stopPropagation();
@@ -425,8 +425,8 @@ export default class UI {
 
     taskDiv.classList.add("task-item");
     taskDiv.appendChild(taskCompleteBtn);
-    taskDiv.appendChild(taskDescription);
     taskDiv.appendChild(taskTitle);
+    taskDiv.appendChild(taskDescription);
     taskDiv.appendChild(taskPriority);
     taskDiv.appendChild(taskProject);
     // taskDiv.appendChild(taskEditBtn);

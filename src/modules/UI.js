@@ -5,7 +5,7 @@ import TodoList from "./TodoList";
 
 export default class UI {
   static projectArray = [];
-  static allTaskArray = new TodoList();
+  // static allTaskArray = new TodoList();
   static inboxArray = new TodoList();
 
   static init() {
@@ -40,10 +40,6 @@ export default class UI {
       "HIGH",
       "Grocery Shopping"
     );
-
-    UI.allTaskArray.appendTask(exampleTask1);
-    UI.allTaskArray.appendTask(exampleTask2);
-    UI.allTaskArray.appendTask(exampleTask3);
 
     exampleProject1.toDoList.appendTask(exampleTask1);
     exampleProject1.toDoList.appendTask(exampleTask2);
@@ -95,19 +91,26 @@ export default class UI {
       UI.closeProjectModal.bind(this)
     );
 
+    // Open Form to add Task
+    this.addTaskBtn.addEventListener("click", UI.openTaskModal.bind(this));
+
+    // Close Form
+    this.taskCloseBtn.addEventListener("click", UI.closeTaskModal.bind(this));
+
     // Add a new project
     this.projectForm.addEventListener("submit", UI.addNewProject.bind(this));
 
     // Add a new task
     this.taskForm.addEventListener("submit", UI.addNewTask.bind(this));
 
-    // Click on nav bar
+    // Click on dynamically created elements
     document.addEventListener("click", function (e) {
       const projectNav = e.target.closest(".project-container-item");
       const nav = e.target.closest(".nav-item");
       const completeBtn = e.target.closest(".task-complete-btn");
-      const deleteBtn = e.target.closest(".task-delete-btn");
+      const deleteTaskBtn = e.target.closest(".task-delete-btn");
       const deleteProjectBtn = e.target.closest("#delete-project-btn");
+      const editTaskBtn = e.target.closest(".task-edit-btn");
 
       if (projectNav && !e.target.matches("button")) {
         const project = UI.findProject(projectNav);
@@ -116,19 +119,13 @@ export default class UI {
         UI.showContent(nav.textContent);
       } else if (completeBtn) {
         UI.deleteTask(completeBtn);
-      } else if (deleteBtn) {
-        UI.deleteTask(deleteBtn);
+      } else if (deleteTaskBtn) {
+        UI.deleteTask(deleteTaskBtn);
       } else if (deleteProjectBtn) {
         UI.deleteProject(deleteProjectBtn);
       }
       e.stopPropagation();
     });
-
-    // Open Form to add Task
-    this.addTaskBtn.addEventListener("click", UI.openTaskModal.bind(this));
-
-    // Close Form
-    this.taskCloseBtn.addEventListener("click", UI.closeTaskModal.bind(this));
   }
 
   static openProjectModal() {
@@ -249,7 +246,7 @@ export default class UI {
       project.toDoList.appendTask(task);
       UI.showContent(projectSelected);
     }
-    UI.allTaskArray.appendTask(task);
+    // UI.allTaskArray.appendTask(task);
 
     this.taskDialog.close();
     this.taskForm.reset();
@@ -260,17 +257,17 @@ export default class UI {
     const containerName = this.contentContainer.children[0].textContent;
 
     // Remove tasks that are in deleted project from all task array
-    let length = UI.allTaskArray.length;
-    let index = 0;
-    while (index < length) {
-      if (UI.allTaskArray.list[index].project === projectName) {
-        const taskTitle = UI.allTaskArray.list[index].title;
-        UI.allTaskArray.deleteTask(taskTitle);
-        length--;
-      } else {
-        index++;
-      }
-    }
+    // let length = UI.allTaskArray().length;
+    // let index = 0;
+    // while (index < length) {
+    //   if (UI.allTaskArray.list[index].project === projectName) {
+    //     const taskTitle = UI.allTaskArray.list[index].title;
+    //     UI.allTaskArray.deleteTask(taskTitle);
+    //     length--;
+    //   } else {
+    //     index++;
+    //   }
+    // }
     UI.projectArray = UI.projectArray.filter(
       (project) => project.name !== projectName
     );
@@ -278,8 +275,10 @@ export default class UI {
     // If deleted project was showing and project array is not empty
     if (projectName === containerName && UI.projectArray.length > 0) {
       UI.showContent(UI.projectArray[0].name);
+    } else if (projectName === containerName && UI.projectArray.length === 0) {
+      UI.showContent("inbox");
     } else {
-      UI.showContent("Inbox");
+      UI.showContent(containerName);
     }
 
     target.parentNode.remove();
@@ -290,9 +289,9 @@ export default class UI {
   static deleteTask(target) {
     let taskName;
     let projectName = this.contentContainer.children[0].textContent;
-    if (target.id === "task-complete-btn") {
+    if (target.classList.contains("task-complete-btn")) {
       taskName = target.nextElementSibling.textContent;
-    } else if (target.id === "task-delete-btn") {
+    } else if (target.classList.contains("task-delete-btn")) {
       taskName = target.parentNode.children[1].textContent;
     }
 
@@ -302,7 +301,7 @@ export default class UI {
         UI.projectArray[i].toDoList.deleteTask(taskName);
       }
     }
-    UI.allTaskArray.deleteTask(taskName);
+    // UI.allTaskArray.deleteTask(taskName);
 
     if (projectName === "Inbox") {
       UI.showContent("Inbox");
@@ -355,15 +354,15 @@ export default class UI {
 
     title.classList.add("title");
     let taskArray;
-    if (name === "Inbox") {
+    if (name.toLowerCase() === "inbox") {
       taskArray = UI.inboxArray;
       title.textContent = "Inbox";
-    } else if (name === "Today") {
+    } else if (name.toLowerCase() === "today") {
       taskArray = UI.getTodayTask();
       title.textContent = "Today";
-    } else if (name === "Next 7 days") {
+    } else if (name.toLowerCase() === "next 7 days") {
       title.textContent = "Next 7 Days";
-      taskArray = UI.allTaskArray;
+      taskArray = UI.allTaskArray();
       taskArray.filterBySeven();
     } else {
       title.textContent = name;
@@ -405,9 +404,6 @@ export default class UI {
     taskEditBtn.textContent = "edit";
 
     // Set ids to buttons
-    taskCompleteBtn.setAttribute("id", "task-complete-btn");
-    taskDeleteBtn.setAttribute("id", "task-delete-btn");
-    taskEditBtn.setAttribute("id", "task-edit-btn");
 
     taskTitle.textContent = task.title;
     taskDueDate.textContent = format(task.dueDate, "MMM do',' yyyy");
@@ -419,7 +415,7 @@ export default class UI {
     taskDiv.appendChild(taskTitle);
     taskDiv.appendChild(taskPriority);
     taskDiv.appendChild(taskProject);
-    taskDiv.appendChild(taskEditBtn);
+    // taskDiv.appendChild(taskEditBtn);
     taskDiv.appendChild(taskDeleteBtn);
     taskDiv.appendChild(taskDueDate);
 
@@ -442,8 +438,6 @@ export default class UI {
 
     taskDescription.setAttribute("id", "task-description");
 
-    // taskFormContainer.appendChild(taskNameInput);
-    // taskFormContainer.appendChild(taskDescription);
     return taskFormContainer;
   }
 
@@ -451,14 +445,58 @@ export default class UI {
   static getTodayTask() {
     const date = new Date().getMonth() + new Date().getDate();
     const list = new TodoList();
-    for (let i = 0; i < UI.allTaskArray.length; i++) {
+    const allTasks = UI.allTaskArray();
+    for (let i = 0; i < allTasks.length; i++) {
       const dueDate =
-        UI.allTaskArray.list[i].dueDate.getMonth() +
-        UI.allTaskArray.list[i].dueDate.getDate();
+        allTasks.list[i].dueDate.getMonth() +
+        allTasks.list[i].dueDate.getDate();
       if (date === dueDate) {
-        list.appendTask(UI.allTaskArray.list[i]);
+        list.appendTask(allTasks.list[i]);
       }
     }
     return list;
+  }
+
+  static allTaskArray() {
+    const taskArray = new TodoList();
+    for (let i = 0; i < UI.projectArray.length; i++) {
+      for (
+        let taskIndex = 0;
+        taskIndex < UI.projectArray[i].toDoList.length;
+        taskIndex++
+      ) {
+        taskArray.appendTask(UI.projectArray[i].toDoList.list[taskIndex]);
+      }
+    }
+    return taskArray;
+  }
+
+  static createTaskForm() {
+    const newForm = document.createElement("form");
+    newForm.setAttribute("id", "add-task-form");
+    newForm.innerHTML = `<div class="form-input">
+          <label for="task-name">Title</label>
+          <input required type="text" id="task-name" placeholder="Task name" />
+        </div>
+        <div class="form-input">
+          <label for="task-description">Description (Optional)</label>
+          <textarea
+            id="task-description"
+            rows="3"
+            placeholder="Description"
+          ></textarea>
+        </div>
+        <div class="form-input">
+          <label for="date">Due Date</label>
+          <input required type="date" id="date" />
+          <label for="priority">Priority</label>
+          <select required name="priority" id="priority">
+            <option value="" disabled selected>Priority</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>`;
+    this.contentContainer.appendChild(newForm);
   }
 }

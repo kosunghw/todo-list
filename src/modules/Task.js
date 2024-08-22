@@ -10,6 +10,14 @@ export default class Task {
     this.completed = false;
   }
 
+  editTask(newTitle, newDescription, newDueDate, newPriority, newProject) {
+    this.title = newTitle;
+    this.description = newDescription;
+    this.dueDate = newDueDate;
+    this.priority = newPriority;
+    this.project = newProject;
+  }
+
   editTitle(newTitle) {
     this.title = newTitle;
   }

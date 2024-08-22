@@ -41,15 +41,41 @@ body {
   gap: 5px;
 }
 
-#inbox:hover,
-#today:hover,
-#week:hover {
+.nav-item-container:hover,
+#add-task-btn:hover {
   background-color: rgb(216, 216, 216);
   cursor: pointer;
 }
 
-#delete-project-btn {
+#add-task-btn {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+}
+
+#add-task-btn img {
+  color: red;
+}
+
+.delete-project-btn {
   margin-left: auto;
+  width: 24px;
+  height: 24px;
+}
+
+.delete-project-btn svg {
+  color: red;
+}
+
+.nav-item-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nav-item-container img {
+  width: 24px;
+  height: 24px;
 }
 
 .project-container-title {
@@ -188,16 +214,43 @@ textarea#task-description {
 }
 
 .task-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 30px 1fr 150px;
+  grid-template-rows: 1fr 1fr 1fr;
   gap: 10px;
+}
+
+.task-title {
+  grid-column: 2/3;
+  grid-row: 1/2;
+}
+
+.task-description {
+  grid-column: 2/3;
+  grid-row: 2/3;
 }
 
 .task-complete-btn {
   width: 20px;
   height: 20px;
   border-radius: 50%;
+  grid-column: 1/2;
+  grid-row: 1/4;
 }
 
 .task-due-date {
-  margin-left: auto;
+  grid-column: 2/3;
+  grid-row: 3/4;
+}
+
+.task-priority-low {
+  background-color: green;
+}
+
+.task-priority-medium {
+  background-color: yellow;
+}
+
+.task-priority-high {
+  background-color: red;
 }

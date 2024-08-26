@@ -108,9 +108,7 @@ export default class UI {
       const nav = e.target.closest(".nav-item-container");
       const completeBtn = e.target.closest(".task-complete-btn");
       const deleteTaskBtn = e.target.closest(".task-delete-btn");
-      const deleteProjectBtn = e.target.closest(".project-delete-btn");
-      // const editTaskBtn = e.target.closest(".task-edit-btn");
-      // console.log(e.target);
+      const deleteProjectBtn = e.target.closest(".delete-project-btn");
 
       if (projectNav && !e.target.matches(".delete-project-btn")) {
         const project = UI.findProject(projectNav);
@@ -121,7 +119,7 @@ export default class UI {
         UI.deleteTask(completeBtn);
       } else if (deleteTaskBtn) {
         UI.deleteTask(deleteTaskBtn);
-      } else if (e.target.matches(".delete-project-btn")) {
+      } else if (deleteProjectBtn) {
         UI.deleteProject(deleteProjectBtn);
       }
       e.stopPropagation();
@@ -253,10 +251,9 @@ export default class UI {
   }
 
   static deleteProject(target) {
+    console.log("deleteProject");
     const projectName = target.parentNode.children[1].textContent;
     const containerName = this.contentContainer.children[0].textContent;
-    console.log(projectName);
-    console.log(containerName);
 
     // Remove tasks that are in deleted project from all task array
     // let length = UI.allTaskArray().length;

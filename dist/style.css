@@ -36,6 +36,8 @@ body {
 }
 
 .project-container-item {
+  border-radius: 3px;
+  padding: 5px;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -58,9 +60,20 @@ body {
 }
 
 .delete-project-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: inherit;
   margin-left: auto;
   width: 24px;
   height: 24px;
+}
+
+button.delete-project-btn:hover {
+  background-color: #eee;
+  color: #202020;
+  cursor: pointer;
 }
 
 .delete-project-btn svg {
@@ -139,10 +152,6 @@ button#add-project-btn span.icon {
 
 .project-container-item:hover > .hide {
   display: block;
-}
-
-button#delete-project-btn:hover {
-  cursor: pointer;
 }
 
 dialog#add-project-dialog {
@@ -253,4 +262,8 @@ textarea#task-description {
 
 .task-priority-high {
   background-color: red;
+}
+
+svg {
+  pointer-events: none;
 }

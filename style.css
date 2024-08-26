@@ -9,6 +9,8 @@
 body {
   height: 100vh;
   position: relative;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 300;
 }
 
 .container {
@@ -18,18 +20,33 @@ body {
 }
 
 .nav-bar {
-  border: 1px solid blue;
+  background-color: #f7f0f5;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
   height: 100%;
   padding: 10px;
+  font-weight: 400;
+}
+
+.nav-bar > div {
+  border-radius: 3px;
+}
+
+#logo {
+  font-family: "Gruppo", sans-serif;
+  font-weight: 400;
+  font-size: 34px;
+  margin-top: 10px;
 }
 
 .content {
   padding: 20px;
-  border: 1px solid red;
   height: 100%;
 }
 
 .project-container {
+  margin-top: 25px;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -45,17 +62,20 @@ body {
 
 .nav-item-container:hover,
 #add-task-btn:hover {
-  background-color: rgb(216, 216, 216);
+  background-color: #e7dfe5;
   cursor: pointer;
 }
 
 #add-task-btn {
-  padding: 5px;
+  margin-top: 20px;
   display: flex;
+  gap: 5px;
   align-items: center;
 }
 
 #add-task-btn img {
+  width: 24px;
+  height: 24px;
   color: red;
 }
 
@@ -71,7 +91,7 @@ body {
 }
 
 button.delete-project-btn:hover {
-  background-color: #eee;
+  background-color: #d3ccd1;
   color: #202020;
   cursor: pointer;
 }
@@ -99,7 +119,7 @@ button.delete-project-btn:hover {
 span.black::before,
 span.red::before,
 span.green::before {
-  font-family: "Matemasie";
+  /* font-family: "Matemasie";s */
   font-size: 20px;
 }
 
@@ -131,10 +151,11 @@ button#add-project-btn {
 }
 
 button#add-project-btn:hover {
-  background-color: lightblue;
+  background-color: #e7dfe5;
 }
 
 button#add-project-btn span.icon {
+  border-radius: 3px;
   background: url(images/plus-icon.png) no-repeat;
   float: left;
   width: 25px;
@@ -146,7 +167,7 @@ button#add-project-btn span.icon {
 }
 
 .project-container-item:hover {
-  background-color: rgb(216, 216, 216);
+  background-color: #e7dfe5;
   cursor: pointer;
 }
 
@@ -191,6 +212,15 @@ dialog#add-task-dialog {
   grid-template-rows: 50px 1fr;
 }
 
+h1.title {
+  font-family: "Kanit", sans-serif;
+  font-size: 34px;
+}
+
+.task-number {
+  font-weight: 400;
+}
+
 .header {
   grid-row: 1;
   grid-column: 1/4;
@@ -223,13 +253,16 @@ textarea#task-description {
 }
 
 .task-item {
+  padding-bottom: 10px;
   display: grid;
+  gap: 3px;
   grid-template-columns: 30px 1fr 150px;
   grid-template-rows: 1fr 1fr 1fr;
-  gap: 10px;
+  align-items: center;
 }
 
 .task-title {
+  font-weight: 400;
   grid-column: 2/3;
   grid-row: 1/2;
 }
@@ -240,28 +273,61 @@ textarea#task-description {
 }
 
 .task-complete-btn {
+  background-color: #f7f0f5;
+  border-width: 1px;
+  margin-top: 4px;
   width: 20px;
   height: 20px;
   border-radius: 50%;
   grid-column: 1/2;
   grid-row: 1/4;
+  align-self: start;
 }
 
 .task-due-date {
+  font-weight: 400;
   grid-column: 2/3;
   grid-row: 3/4;
 }
 
+.task-priority {
+  border-radius: 15px;
+  padding: 3px 10px;
+  font-weight: 400;
+  justify-self: start;
+}
+
 .task-priority-low {
   background-color: green;
+  color: white;
 }
 
 .task-priority-medium {
-  background-color: yellow;
+  color: white;
+  background-color: rgb(255, 208, 0);
 }
 
 .task-priority-high {
   background-color: red;
+  color: white;
+}
+
+button.task-delete-btn {
+  justify-self: start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: inherit;
+  width: 27px;
+  height: 27px;
+  border-radius: 3px;
+  padding: 3px;
+}
+
+button.task-delete-btn:hover {
+  cursor: pointer;
+  background-color: #e7dfe5;
 }
 
 svg {

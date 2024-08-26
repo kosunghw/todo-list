@@ -21,14 +21,14 @@ export default class UI {
     const exampleTask1 = new Task(
       "LeetCode",
       "Solve problems on LeetCode",
-      new Date("08-24-2024"),
+      new Date("08-28-2024"),
       "MEDIUM",
       "Study"
     );
     const exampleTask2 = new Task(
       "Todo List",
       "Finish Todo LIst",
-      new Date("08-20-2024"),
+      new Date("08-26-2024"),
       "MEDIUM",
       "Study"
     );
@@ -36,14 +36,23 @@ export default class UI {
     const exampleTask3 = new Task(
       "Buy Kitchen Towels",
       "We are out of kitchen towels",
-      new Date("08-20-2024"),
+      new Date("08-26-2024"),
       "HIGH",
+      "Grocery Shopping"
+    );
+
+    const exampleTask4 = new Task(
+      "Buy Oatmeal",
+      "Nothing to eat in the morning",
+      new Date("08-30-2024"),
+      "LOW",
       "Grocery Shopping"
     );
 
     exampleProject1.toDoList.appendTask(exampleTask1);
     exampleProject1.toDoList.appendTask(exampleTask2);
     exampleProject2.toDoList.appendTask(exampleTask3);
+    exampleProject2.toDoList.appendTask(exampleTask4);
     UI.projectArray.push(exampleProject1);
     UI.projectArray.push(exampleProject2);
     UI.render();
@@ -350,6 +359,8 @@ export default class UI {
     const taskNumber = document.createElement("div");
     const taskDiv = document.createElement("div");
 
+    taskNumber.classList.add("task-number");
+
     title.classList.add("title");
     let taskArray;
     if (name.toLowerCase() === "inbox") {
@@ -389,6 +400,7 @@ export default class UI {
     const taskDueDate = document.createElement("div");
     const taskPriority = document.createElement("div");
     const taskProject = document.createElement("div");
+    const taskProjectColor = document.createElement("span");
     const taskCompleteBtn = document.createElement("button");
     const taskDeleteBtn = document.createElement("button");
     const taskEditBtn = document.createElement("button");
@@ -399,6 +411,11 @@ export default class UI {
     taskDeleteBtn.classList.add("task-delete-btn");
     taskEditBtn.classList.add("task-edit-btn");
     taskDueDate.classList.add("task-due-date");
+    taskProject.classList.add("task-project");
+    taskPriority.classList.add("task-priority");
+
+    const project = UI.findProject(task.project);
+    taskProjectColor.classList.add(`${project.color}`);
 
     if (task.priority === "HIGH") {
       taskPriority.classList.add("task-priority-high");
@@ -409,7 +426,7 @@ export default class UI {
     }
 
     // Add text content to delete and edit button
-    taskDeleteBtn.textContent = "delete";
+    taskDeleteBtn.innerHTML = `<?xml version="1.0" encoding="iso-8859-1"?><!-- Generator: Adobe Illustrator 19.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  --><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16" width="16px" height="16px"><path style="fill:none;stroke:#000000;stroke-miterlimit:10;" d="M11.5,4v8.5c0,0.552-0.448,1-1,1h-6c-0.552,0-1-0.448-1-1V4"/><line style="fill:none;stroke:#000000;stroke-miterlimit:10;" x1="5.5" y1="5" x2="5.5" y2="12"/><line style="fill:none;stroke:#000000;stroke-miterlimit:10;" x1="7.5" y1="5" x2="7.5" y2="12"/><line style="fill:none;stroke:#000000;stroke-miterlimit:10;" x1="9.5" y1="5" x2="9.5" y2="12"/><line style="fill:none;stroke:#000000;stroke-miterlimit:10;" x1="2" y1="3.5" x2="13" y2="3.5"/><path style="fill:none;stroke:#000000;stroke-linecap:square;stroke-miterlimit:10;" d="M9.5,3.5V2.497C9.5,1.946,9.054,1.5,8.503,1.5H6.497C5.946,1.5,5.5,1.946,5.5,2.497V3.5"/></svg>`;
     taskEditBtn.textContent = "edit";
 
     // Set ids to buttons
@@ -418,7 +435,11 @@ export default class UI {
     taskDescription.textContent = task.description;
     taskDueDate.textContent = format(task.dueDate, "MMM do',' yyyy");
     taskPriority.textContent = task.priority;
-    taskProject.textContent = `#${task.project}`;
+
+    taskProjectColor.style.fontFamily = "Fira Sans";
+    taskProject.append(taskProjectColor);
+    taskProject.append(task.project);
+    // taskProject.textContent = task.project;
 
     taskDiv.classList.add("task-item");
     taskDiv.appendChild(taskCompleteBtn);

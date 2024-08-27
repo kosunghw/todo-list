@@ -138,6 +138,38 @@ span.green::before {
   color: green;
 }
 
+span.blue::before {
+  content: "#";
+  color: blue;
+}
+span.orange::before {
+  content: "#";
+  color: orange;
+}
+span.purple::before {
+  content: "#";
+  color: purple;
+}
+
+option {
+  font-weight: 700;
+}
+option.red {
+  color: red;
+}
+option.green {
+  color: green;
+}
+option.blue {
+  color: blue;
+}
+option.orange {
+  color: orange;
+}
+option.purple {
+  color: purple;
+}
+
 #projects {
   font-weight: bold;
   font-size: 1.5rem;

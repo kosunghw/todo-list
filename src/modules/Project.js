@@ -1,11 +1,11 @@
 import TodoList from "./TodoList";
 
 export default class Project {
-  constructor(name, color) {
+  constructor(name, color, rendered, toDoList) {
     this.name = name;
     this.color = color;
-    this.rendered = false;
-    this.toDoList = new TodoList();
+    this.rendered = rendered;
+    this.toDoList = toDoList;
   }
 
   // Use this function after rendering.

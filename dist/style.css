@@ -118,8 +118,10 @@ button.delete-project-btn:hover {
 
 span.black::before,
 span.red::before,
-span.green::before {
-  /* font-family: "Matemasie";s */
+span.green::before,
+span.blue::before,
+span.orange::before,
+span.purple::before {
   font-size: 20px;
 }
 

@@ -2,21 +2,44 @@ import { format, compareAsc } from "date-fns";
 import Project from "./Project";
 import Task from "./Task";
 import TodoList from "./TodoList";
+import Storage from "./Storage";
 
 export default class UI {
   static projectArray = [];
-  // static allTaskArray = new TodoList();
   static inboxArray = new TodoList();
 
   static init() {
     UI.cacheDOM();
     UI.bindEventHandler();
-    UI.exampleProjects();
+    UI.renderProjects();
   }
 
-  static exampleProjects() {
-    const exampleProject1 = new Project("Study", "black");
-    const exampleProject2 = new Project("Grocery Shopping", "red");
+  static renderProjects() {
+    if (Storage.checkStorage()) {
+      Storage.getProjects(UI.projectArray);
+      UI.render();
+      UI.showContent(UI.projectArray[0].name);
+    } else {
+      UI.initializeStorage();
+      Storage.getProjects(UI.projectArray);
+      UI.render();
+      UI.showContent("Inbox");
+    }
+  }
+
+  static initializeStorage() {
+    const exampleProject1 = new Project(
+      "Study",
+      "black",
+      false,
+      new TodoList()
+    );
+    const exampleProject2 = new Project(
+      "Grocery Shopping",
+      "red",
+      false,
+      new TodoList()
+    );
 
     const exampleTask1 = new Task(
       "JavaScript Course",
@@ -36,7 +59,7 @@ export default class UI {
     const exampleTask3 = new Task(
       "Buy coffee",
       "NEED CAFFEINE",
-      new Date("08-26-2024"),
+      new Date("08-31-2024"),
       "HIGH",
       "Grocery Shopping"
     );
@@ -53,10 +76,9 @@ export default class UI {
     exampleProject1.toDoList.appendTask(exampleTask2);
     exampleProject2.toDoList.appendTask(exampleTask3);
     exampleProject2.toDoList.appendTask(exampleTask4);
-    UI.projectArray.push(exampleProject1);
-    UI.projectArray.push(exampleProject2);
-    UI.render();
-    UI.showContent("Study");
+
+    Storage.setProjectToStorage(exampleProject1);
+    Storage.setProjectToStorage(exampleProject2);
   }
 
   static cacheDOM() {
@@ -207,6 +229,7 @@ export default class UI {
     event.preventDefault();
     const name = document.querySelector("#project-name").value;
     const color = document.querySelector("#project-color").value;
+    let project;
     // Check if project array has a project with the same name
     if (
       UI.projectArray.some(
@@ -215,14 +238,15 @@ export default class UI {
     ) {
       alert("Same project name exists");
     } else {
-      const newProject = new Project(name, color);
-      UI.projectArray.push(newProject);
+      project = new Project(name, color, false, new TodoList());
+      UI.projectArray.push(project);
     }
     this.projectDialog.close();
     this.projectForm.reset();
 
     UI.render();
     UI.showContent(name);
+    Storage.setProjectToStorage(project);
   }
 
   static addNewTask(event) {
@@ -255,6 +279,7 @@ export default class UI {
     }
     // UI.allTaskArray.appendTask(task);
 
+    Storage.setTaskToStorage(task);
     this.taskDialog.close();
     this.taskForm.reset();
   }
@@ -262,19 +287,11 @@ export default class UI {
   static deleteProject(target) {
     const projectName = target.parentNode.children[1].textContent;
     const containerName = this.contentContainer.children[0].textContent;
+    const project = UI.findProject(projectName);
 
-    // Remove tasks that are in deleted project from all task array
-    // let length = UI.allTaskArray().length;
-    // let index = 0;
-    // while (index < length) {
-    //   if (UI.allTaskArray.list[index].project === projectName) {
-    //     const taskTitle = UI.allTaskArray.list[index].title;
-    //     UI.allTaskArray.deleteTask(taskTitle);
-    //     length--;
-    //   } else {
-    //     index++;
-    //   }
-    // }
+    // delete project from storage
+    Storage.deleteProjectFromStorage(project);
+
     UI.projectArray = UI.projectArray.filter(
       (project) => project.name !== projectName
     );
@@ -294,30 +311,30 @@ export default class UI {
 
   // Delete Task
   static deleteTask(target) {
-    let taskName;
-    let projectName = this.contentContainer.children[0].textContent;
-    if (target.classList.contains("task-complete-btn")) {
-      taskName = target.nextElementSibling.textContent;
-    } else if (target.classList.contains("task-delete-btn")) {
-      taskName = target.parentNode.children[1].textContent;
-    }
+    let taskName = target.parentNode.children[1].textContent;
+    let containerName = this.contentContainer.children[0].textContent;
+    let projectName = target.parentNode.children[4].children[1].textContent;
 
-    for (let i = 0; i < UI.projectArray.length; i++) {
-      let taskNameArray = UI.projectArray[i].toDoList.getTaskName();
-      if (taskNameArray.includes(taskName)) {
-        UI.projectArray[i].toDoList.deleteTask(taskName);
-      }
-    }
+    const project = UI.findProject(projectName);
+    const task = UI.findTask(taskName, project);
 
-    if (projectName === "Inbox") {
+    // delete task from project's todo list
+    project.toDoList.deleteTask(taskName);
+
+    // delete from storage
+    Storage.deleteTaskFromStorage(task, project.toDoList);
+
+    if (containerName === "Inbox") {
       UI.showContent("Inbox");
-    } else if (projectName === "Today") {
+    } else if (containerName === "Today") {
       UI.showContent("Today");
-    } else if (projectName === "Next 7 Days") {
+    } else if (containerName === "Next 7 Days") {
       UI.showContent("Next 7 days");
     } else {
       UI.showContent(projectName);
     }
+
+    // Storage.deleteTaskFromStorage(task);
   }
 
   static findProject(target) {
@@ -339,12 +356,10 @@ export default class UI {
     }
   }
 
-  static findTask(target, project) {
-    if (typeof target === "string") {
-      for (let i = 0; i < project.toDoList.length; i++) {
-        if (target === project.toDoList.list[i].title) {
-          return project.toDoList.list[i];
-        }
+  static findTask(taskName, project) {
+    for (let i = 0; i < project.toDoList.length; i++) {
+      if (taskName === project.toDoList.list[i].title) {
+        return project.toDoList.list[i];
       }
     }
   }
@@ -445,7 +460,9 @@ export default class UI {
 
     taskProjectColor.style.fontFamily = "Fira Sans";
     taskProject.append(taskProjectColor);
-    taskProject.append(task.project);
+    const projectName = document.createElement("span");
+    projectName.textContent = task.project;
+    taskProject.append(projectName);
     // taskProject.textContent = task.project;
 
     taskDiv.classList.add("task-item");

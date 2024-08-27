@@ -19,23 +19,23 @@ export default class UI {
     const exampleProject2 = new Project("Grocery Shopping", "red");
 
     const exampleTask1 = new Task(
-      "LeetCode",
-      "Solve problems on LeetCode",
-      new Date("08-28-2024"),
+      "JavaScript Course",
+      "Finish the JavaScript Course by the end of September",
+      new Date("09-30-2024"),
       "MEDIUM",
       "Study"
     );
     const exampleTask2 = new Task(
-      "Todo List",
-      "Finish Todo LIst",
-      new Date("08-26-2024"),
-      "MEDIUM",
+      "The Odin Project",
+      "Finish The Odin Project by the end of the year",
+      new Date("12-31-2024"),
+      "HIGH",
       "Study"
     );
 
     const exampleTask3 = new Task(
-      "Buy Kitchen Towels",
-      "We are out of kitchen towels",
+      "Buy coffee",
+      "NEED CAFFEINE",
       new Date("08-26-2024"),
       "HIGH",
       "Grocery Shopping"
@@ -421,6 +421,7 @@ export default class UI {
     taskPriority.classList.add("task-priority");
 
     const project = UI.findProject(task.project);
+    taskProjectColor.classList.add("task-project");
     taskProjectColor.classList.add(`${project.color}`);
 
     if (task.priority === "HIGH") {

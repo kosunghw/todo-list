@@ -281,6 +281,7 @@ form {
 }
 
 input[type="text"]#task-name {
+  width: 100%;
   font-size: 1.2rem;
   font-weight: 700;
   height: 30px;
@@ -294,6 +295,7 @@ textarea#task-description {
   border: none;
   font-size: 12px;
   resize: none;
+  width: 100%;
 }
 
 .task-input {
@@ -331,16 +333,6 @@ h1.title {
   grid-column: 1/4;
 }
 
-input#task-name {
-  font-size: 14px;
-  width: 100%;
-}
-
-textarea#task-description {
-  font-size: 12px;
-  width: 100%;
-}
-
 .task-form-container {
   width: 500px;
 }
@@ -373,6 +365,7 @@ textarea#task-description {
 }
 
 .task-description {
+  font-size: 0.8rem;
   font-weight: 300;
   grid-column: 2/3;
   grid-row: 2/3;
@@ -402,7 +395,12 @@ textarea#task-description {
 }
 
 .task-project {
+  font-size: 0.8rem;
   font-weight: 300;
+}
+
+span.task-project::before {
+  font-size: 0.8rem;
 }
 
 .task-priority-low {
@@ -450,6 +448,7 @@ svg {
   gap: 5px;
   margin-bottom: 10px;
   align-items: center;
+  font-size: 0.9rem;
 }
 
 a:visited {

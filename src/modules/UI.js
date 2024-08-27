@@ -21,7 +21,6 @@ export default class UI {
       UI.showContent(UI.projectArray[0].name);
     } else {
       UI.initializeStorage();
-      Storage.getProjects(UI.projectArray);
       UI.render();
       UI.showContent("Inbox");
     }
@@ -79,6 +78,9 @@ export default class UI {
 
     Storage.setProjectToStorage(exampleProject1);
     Storage.setProjectToStorage(exampleProject2);
+
+    UI.projectArray.push(exampleProject1);
+    UI.projectArray.push(exampleProject2);
   }
 
   static cacheDOM() {

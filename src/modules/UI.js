@@ -260,7 +260,6 @@ export default class UI {
   }
 
   static deleteProject(target) {
-    console.log("deleteProject");
     const projectName = target.parentNode.children[1].textContent;
     const containerName = this.contentContainer.children[0].textContent;
 
@@ -323,6 +322,9 @@ export default class UI {
 
   static findProject(target) {
     if (typeof target === "string") {
+      if (target.toLowerCase() === "inbox") {
+        return "Inbox";
+      }
       for (let i = 0; i < UI.projectArray.length; i++) {
         if (target === UI.projectArray[i].name) {
           return UI.projectArray[i];
@@ -367,16 +369,20 @@ export default class UI {
       taskArray = UI.inboxArray;
       title.textContent = "Inbox";
     } else if (name.toLowerCase() === "today") {
-      taskArray = UI.getTodayTask();
+      taskArray = UI.allTaskArray();
+      taskArray.filterByToday();
       title.textContent = "Today";
     } else if (name.toLowerCase() === "next 7 days") {
       title.textContent = "Next 7 Days";
       taskArray = UI.allTaskArray();
       taskArray.filterBySeven();
+      taskArray.sortByDueDate();
     } else {
       title.textContent = name;
       taskArray = UI.findProject(name).toDoList;
+      taskArray.sortByDueDate();
     }
+
     const length = taskArray.length;
     for (let i = 0; i < length; i++) {
       taskDiv.appendChild(UI.createTaskDiv(taskArray.list[i]));
@@ -471,22 +477,6 @@ export default class UI {
     taskDescription.setAttribute("id", "task-description");
 
     return taskFormContainer;
-  }
-
-  // Returns a list containing tasks that are due TODAY
-  static getTodayTask() {
-    const date = new Date().getMonth() + new Date().getDate();
-    const list = new TodoList();
-    const allTasks = UI.allTaskArray();
-    for (let i = 0; i < allTasks.length; i++) {
-      const dueDate =
-        allTasks.list[i].dueDate.getMonth() +
-        allTasks.list[i].dueDate.getDate();
-      if (date === dueDate) {
-        list.appendTask(allTasks.list[i]);
-      }
-    }
-    return list;
   }
 
   static allTaskArray() {

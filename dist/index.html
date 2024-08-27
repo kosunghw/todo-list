@@ -13,7 +13,7 @@
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400&family=Kanit:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;700&family=Kanit:wght@400;700&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -43,6 +43,16 @@
             <button id="add-project-btn"><span class="icon"></span></button>
           </div>
         </div>
+        <div id="footer">
+          <div class="footer-item">
+            Icons by <a href="https://icons8.com/">Icons8</a> 
+          </div>
+          
+          <div class="footer-item">
+            2024 &copy; <a href="https://github.com/kosunghw">kosunghw</a>
+          </div>
+        </footer>
+        </div>
       </div>
       <div class="content-container">
         <div class="header"></div>
@@ -57,21 +67,27 @@
         <div class="modal-title">
           <span>Add Project</span>
         </div>
-        <div class="form-input">
-          <label for="project-name">Name</label>
-          <input type="text" name="project-name" id="project-name" />
-        </div>
-        <div class="form-input">
-          <label for="project-color">Color</label>
-          <select name="project-color" id="project-color">
-            <option value="black">black</option>
-            <option value="red">red</option>
-            <option value="green">green</option>
-          </select>
-        </div>
-        <div class="form-input">
-          <button id="project-dialog-close" type="button">Cancel</button>
-          <button type="submit">Add project</button>
+        <div class="input-container">
+          <div class="form-input">
+            <label for="project-name">Name</label>
+            <input type="text" name="project-name" id="project-name" />
+          </div>
+          <div class="form-input">
+            <label for="project-color">Color</label>
+            <select name="project-color" id="project-color">
+              <option value="black">black</option>
+              <option value="red">red</option>
+              <option value="green">green</option>
+            </select>
+          </div>
+          <div class="form-input form-button-container">
+            <button id="project-dialog-close" class="close" type="button">
+              Cancel
+            </button>
+            <button id="project-form-submit" class="add" type="submit">
+              Add
+            </button>
+          </div>
         </div>
       </form>
     </dialog>
@@ -79,32 +95,44 @@
     <!-- Add task dialog -->
     <dialog id="add-task-dialog">
       <form action="#" id="add-task-form" method="post">
-        <div class="modal-title">Add task</div>
-        <div class="form-input">
-          <input required type="text" id="task-name" placeholder="Task name" />
-        </div>
-        <div class="form-input">
-          <textarea
-            id="task-description"
-            rows="1"
-            placeholder="Description"
-          ></textarea>
-        </div>
-        <div class="form-input">
-          <input required type="date" id="date" />
-          <select required name="priority" id="priority">
-            <option value="" disabled selected>Priority</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-          </select>
-          <select required name="task-project-select" id="task-project-select">
-            <option value="inbox">Inbox</option>
-          </select>
-        </div>
-        <div class="form-input">
-          <button type="button" class="task-dialog-close">Cancel</button>
-          <button type="submit">Add Task</button>
+        <div class="input-container">
+          <div class="form-input">
+            <input
+              required
+              type="text"
+              id="task-name"
+              placeholder="Task name"
+            />
+          </div>
+          <div class="form-input">
+            <textarea
+              id="task-description"
+              rows="1"
+              placeholder="Description"
+            ></textarea>
+          </div>
+          <div class="form-input task-input">
+            <input required type="date" id="date" />
+            <select required name="priority" id="priority">
+              <option value="" disabled selected>Priority</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+            <select
+              required
+              name="task-project-select"
+              id="task-project-select"
+            >
+              <option value="inbox">Inbox</option>
+            </select>
+          </div>
+          <div class="form-input form-button-container">
+            <button type="button" class="task-dialog-close close">
+              Cancel
+            </button>
+            <button class="add" type="submit">Add</button>
+          </div>
         </div>
       </form>
     </dialog>

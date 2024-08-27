@@ -1,4 +1,4 @@
-import { compareAsc, format } from "date-fns";
+import { compareAsc, differenceInDays } from "date-fns";
 
 export default class TodoList {
   constructor() {
@@ -42,11 +42,16 @@ export default class TodoList {
   filterBySeven() {
     this.taskArray = this.taskArray.filter((element) => {
       const today = new Date();
-      const sevenDay = today.setDate(today.getDate() + 7); // Next 7 day in Date object format
-      const sevenDayStr = format(sevenDay, "yyMMdd"); // in format of 'yymmdd' (240831)
-      const taskDueDate = format(element.dueDate, "yyMMdd");
-      const dayDiff = sevenDayStr - taskDueDate;
+      const dayDiff = differenceInDays(element.dueDate, today);
       return 0 <= dayDiff && dayDiff <= 7;
+    });
+  }
+
+  filterByToday() {
+    this.taskArray = this.taskArray.filter((element) => {
+      const today = new Date();
+      const dayDiff = differenceInDays(element.dueDate, today);
+      return 0 === dayDiff;
     });
   }
 }
